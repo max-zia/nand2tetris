@@ -1,8 +1,3 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-// File name: projects/03/b/RAM4K.hdl
-
 /**
  * Memory of 4K registers, each 16 bit-wide. Out holds the value
  * stored at the memory location specified by address. If load==1, then 
@@ -15,5 +10,42 @@ CHIP RAM4K {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // 8-stack of RAM512
+    RAM512(in=in, load=ramLoad0, address=address[3..11], out=ramOut0);
+    RAM512(in=in, load=ramLoad1, address=address[3..11], out=ramOut1);
+    RAM512(in=in, load=ramLoad2, address=address[3..11], out=ramOut2);
+    RAM512(in=in, load=ramLoad3, address=address[3..11], out=ramOut3);
+    RAM512(in=in, load=ramLoad4, address=address[3..11], out=ramOut4);
+    RAM512(in=in, load=ramLoad5, address=address[3..11], out=ramOut5);
+    RAM512(in=in, load=ramLoad6, address=address[3..11], out=ramOut6);
+    RAM512(in=in, load=ramLoad7, address=address[3..11], out=ramOut7);
+
+
+    // send load signal to 8-stack
+    DMux8Way(
+    	in=load, 
+    	sel=address[0..2], 
+    	a=ramLoad0, 
+    	b=ramLoad1,
+    	c=ramLoad2,
+    	d=ramLoad3,
+    	e=ramLoad4,
+    	f=ramLoad5,
+    	g=ramLoad6,
+    	h=ramLoad7
+    );
+
+    // select which of the 8 RAM64s to send to out
+    Mux8Way16(
+    	sel=address[0..2],
+    	a=ramOut0,
+    	b=ramOut1,
+    	c=ramOut2,
+    	d=ramOut3,
+    	e=ramOut4,
+    	f=ramOut5,
+    	g=ramOut6,
+    	h=ramOut7,
+    	out=out
+    );
 }

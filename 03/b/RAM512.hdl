@@ -1,8 +1,3 @@
-// This file is part of the materials accompanying the book 
-// "The Elements of Computing Systems" by Nisan and Schocken, 
-// MIT Press. Book site: www.idc.ac.il/tecs
-// File name: projects/03/b/RAM512.hdl
-
 /**
  * Memory of 512 registers, each 16 bit-wide. Out holds the value
  * stored at the memory location specified by address. If load==1, then 
@@ -41,7 +36,7 @@ CHIP RAM512 {
     	h=ramLoad7
     );
 
-    // determine which of the 8 RAM64s to send to out
+    // select which of the 8 RAM64s to send to out
     // 3 chars needed in address
     Mux8Way16(
     	sel=address[0..2],
