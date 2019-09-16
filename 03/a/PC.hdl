@@ -12,9 +12,22 @@
  */
 
 CHIP PC {
-    IN in[16],load,inc,reset;
+    IN in[16], load, inc, reset;
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // Select a control bit to feed into Register
+    // Note that reset overrides load overrides inc
+    Mux(a=inc, b=load, sel=load, out=OutMuxA);
+    Mux(a=OutMuxA, b=reset, sel=reset, out=RegisterLoad);
+
+    // If control bit asserted, stores 0 or incremented value or in value 
+    // If !(control bit asserted), stores nothing
+    Register(in=RegisterIn, load=RegisterLoad, out=out, out=RegisterFeedback);
+
+    // Select 16-bit bus to feed into Register
+    // Again, reset takes precedence, followed by load, followed by inc  
+    Inc16(in=RegisterFeedback, out=OutInc);
+    Mux16(a=OutInc, b=in, sel=load, out=OutMux16A);
+    Mux16(a=OutMux16A, b=false, sel=reset, out=RegisterIn);
 }

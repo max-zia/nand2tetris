@@ -1,8 +1,3 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-// File name: projects/05/CPU.hdl
-
 /**
  * The Hack CPU (Central Processing unit), consisting of an ALU,
  * two registers named A and D, and a program counter named PC.
@@ -39,5 +34,111 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+
+    // INSTRUCTION DECODING
+    DMux(in=true, sel=instruction[15], a=DMuxOutA, b=DMuxOutB);
+    Mux16(
+        a=false, 
+        b=instruction, 
+        sel=DMuxOutB, 
+        out[0]=j3,      // CPU control bits parsed from instruction
+        out[1]=j2,      // These will all be 0 in case of A-instruction
+        out[2]=j1,
+        out[3]=writeM,  // out[3]=d3, which facilitates write to M
+        out[4]=d2,
+        out[5]=d1,
+        out[6]=c6,
+        out[7]=c5,
+        out[8]=c4,
+        out[9]=c3,
+        out[10]=c2,
+        out[11]=c1,
+        out[12]=a
+    );
+    Mux(
+        a=d1,           // d1 facilitates write to ARegister
+        b=true, 
+        sel=DMuxOutA, 
+        out=ARegisterLoad
+    );
+
+    // INSTRUCTION EXECUTION
+    Mux16(
+        a=feedback,             // feedback is ALU output
+        b=instruction, 
+        sel=DMuxOutA,           // sel is determined by instruction decoding
+        out=ARegisterIn
+    );
+    ARegister(
+        in=ARegisterIn, 
+        load=ARegisterLoad, 
+        out=ARegisterOut,
+        out[0..14]=addressM    // Address in data memory (of M)
+    );
+    Mux16(
+        a=ARegisterOut, 
+        b=inM, 
+        sel=a, 
+        out=ALUInputY
+    );
+    ALU(
+        x=ALUInputX,            // ALU inputs
+        y=ALUInputY,
+        zx=c1,                  // ALU control bits       
+        nx=c2,
+        zy=c3,
+        ny=c4,
+        f=c5,
+        no=c6,
+        zr=zr,                  // ALU output status bits
+        ng=ng,
+        out=outM,               // M value output
+        out=feedback            // Feedback bit for DRegister and Mux16
+    );
+    DRegister(
+        in=feedback,
+        load=d2,                // d2 facilitates write to DRegister
+        out=ALUInputX
+    );
+    PC(
+        in=ARegisterOut,
+        reset=reset,
+        load=PCLoad,            // load determined based on NIF tests
+        inc=true,               // inc always true since, in our PC, it is
+        out[0..14]=pc           // always overridden by load and reset
+    );
+
+    // NEXT INSTRUCTION FETCHING (NIF)
+    // Parts required for jump condition tests
+    Or(a=j1, b=j2, out=j1Orj2);
+    Not(in=zr, out=Notzr);
+    Not(in=ng, out=Notng);
+    And(a=j1, b=j2, out=j1Andj2);
+
+    // 8 jump condition tests for Mux8Way
+    Or(a=j1Orj2, b=j3, out=Test1);
+    And(a=Notzr, b=Notng, out=Test2);
+    // Test 3 is simply zr
+    Or(a=zr, b=Notng, out=Test4);
+    // Test 5 is simply ng
+    // Test 6 is simply Notzr
+    Or(a=zr, b=ng, out=Test7);
+    And(a=j1Andj2, b=j3, out=Test8);
+
+    // Apply jump condition using Mux8Way selectors and see whether
+    // jump condition is satisfied
+    Mux8Way(
+        a=Test1,
+        b=Test2,
+        c=zr,
+        d=Test4,
+        e=ng,
+        f=Notzr,
+        g=Test7,
+        h=Test8,
+        sel[2]=j1,              // sel[2] is MSB
+        sel[1]=j2,
+        sel[0]=j3,              // sel[0] is LSB
+        out=PCLoad
+    );
 }
