@@ -1,5 +1,4 @@
 // Multiplies R0 and R1 and stores the result in R2.
-// R1 and R2 are any integers (i.e., positive, negative, or zero).
 // (R0, R1, R2 refer to RAM[0], RAM[1], and RAM[2], respectively.)
 
 // initialise R2=0
