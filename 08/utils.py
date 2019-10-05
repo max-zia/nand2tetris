@@ -1,5 +1,5 @@
 import uuid 	# module used to generate unique ID for type_2_binary labels 
-import os 		# # os.listdir() returns everything in a directory
+import os 		# os.listdir() returns everything in a directory
 
 class Parser():
 	"""
@@ -311,7 +311,8 @@ class CodeWriter():
 
 class Initialiser():
 	"""
-	Initialises and runs the VM translator.
+	Facilitates access to the VM files that are to be translated. Contains
+	some helper functions for the main translation process.
 	"""
 
 	def __init__(self, cli):
@@ -331,3 +332,34 @@ class Initialiser():
 		self.vm_files = ls
 		self.asm_filename = asm_filename
 
+	def translate_file(self, parser, code_writer):
+		"""
+		Runs the translation code for a given parser.
+		"""
+		command = parser.command_type()
+
+		# Stack arithmetic commands
+		if command == 'C_ARITHMETIC':
+			code_writer.write_arithmetic(parser.arg1())
+
+		# Memory access commands
+		elif command == 'C_PUSH' or command == 'C_POP':
+			code_writer.write_push_pop(command, parser.arg1(), parser.arg2())
+
+		# Program flow commands
+		elif command == 'C_LABEL':
+			code_writer.write_label(parser.arg1())
+		elif command == 'C_GOTO':
+			code_writer.write_goto(parser.arg1())
+		elif command == 'C_IF':
+			code_writer.write_if(parser.arg1())
+
+		# Function calling commands
+		elif command == 'C_CALL':
+			code_writer.write_call(parser.arg1(), parser.arg2())
+		elif command == 'C_FUNCTION':
+			code_writer.write_function(parser.arg1(), parser.arg2())
+		elif command == 'C_RETURN':
+			code_writer.write_return()
+
+		parser.advance()

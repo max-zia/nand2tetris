@@ -2,7 +2,7 @@
 D=A
 @SP
 M=D
-@Sys.init$ret.29a1
+@Sys.init$ret.3c54
 D=A
 @SP
 A=M
@@ -51,7 +51,7 @@ D=M
 M=D
 @Sys.init
 0;JMP
-(Sys.init$ret.29a1)
+(Sys.init$ret.3c54)
 (Class1.set)
 @0
 D=A
@@ -411,7 +411,7 @@ A=M
 M=D
 @SP
 M=M+1
-@Class1.set$ret.3569
+@Class1.set$ret.7897
 D=A
 @SP
 A=M
@@ -460,7 +460,7 @@ D=M
 M=D
 @Class1.set
 0;JMP
-(Class1.set$ret.3569)
+(Class1.set$ret.7897)
 @0
 D=A
 @R5
@@ -491,7 +491,7 @@ A=M
 M=D
 @SP
 M=M+1
-@Class2.set$ret.3df9
+@Class2.set$ret.4f1d
 D=A
 @SP
 A=M
@@ -540,7 +540,7 @@ D=M
 M=D
 @Class2.set
 0;JMP
-(Class2.set$ret.3df9)
+(Class2.set$ret.4f1d)
 @0
 D=A
 @R5
@@ -557,7 +557,7 @@ A=M
 M=D
 @SP
 M=M-1
-@Class1.get$ret.e696
+@Class1.get$ret.6643
 D=A
 @SP
 A=M
@@ -606,8 +606,8 @@ D=M
 M=D
 @Class1.get
 0;JMP
-(Class1.get$ret.e696)
-@Class2.get$ret.a641
+(Class1.get$ret.6643)
+@Class2.get$ret.ae27
 D=A
 @SP
 A=M
@@ -656,7 +656,7 @@ D=M
 M=D
 @Class2.get
 0;JMP
-(Class2.get$ret.a641)
+(Class2.get$ret.ae27)
 (Sys.WHILE)
 @Sys.WHILE
 0;JMP
