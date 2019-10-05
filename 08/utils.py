@@ -1,4 +1,5 @@
 import uuid 	# module used to generate unique ID for type_2_binary labels 
+import os 		# # os.listdir() returns everything in a directory
 
 class Parser():
 	"""
@@ -22,6 +23,7 @@ class Parser():
 			]
 
 		self.commands = lines
+		self.filename = input_file.split('.')[0].split('/')[-1]
 
 	def has_more_commands(self):
 		"""
@@ -75,6 +77,7 @@ class Parser():
 		"""
 		return self.commands[0].split()[2]
 
+
 class CodeWriter():
 	"""
 	Translates VM commands into Hack assembly and writes these into .asm file.
@@ -87,7 +90,6 @@ class CodeWriter():
 		available as an attribute (.output_file). 
 		"""
 		self.output_file = open(output_file, 'w')
-		self.filename = self.output_file.name.split('.')[0].split('/')[-1]
 
 	def close(self):
 		"""
@@ -97,10 +99,17 @@ class CodeWriter():
 
 	def set_filename(self, new_input_file):
 		"""
-		Called when the translation of a new vm file has started. Ensures that
-		each VM file has its own 'static' virtual memory segment.
+		Called when the translation of a new vm file has started.
 		"""
 		self.filename = new_input_file.split('.')[0].split('/')[-1]
+
+	def write_init(self):
+		"""
+		Writes assembly code that effects the VM initialisation (i.e., writes
+		the so-called "bootstrap code" to the beginning of the .asm file).
+		"""
+		self.output_file.write('@256\nD=A\n@SP\nM=D\n')
+		self.write_call('Sys.init', '0')
 
 	def write_arithmetic(self, command):
 		"""
@@ -195,3 +204,130 @@ class CodeWriter():
 							'A=M\nM=D\n@SP\nM=M-1\n')
 
 		self.output_file.write(asm_code)
+
+	def write_label(self, label):
+		"""
+		Writes assembly code that effects the label command (i.e., writes
+		the specified label into the next line of the .asm file).
+		"""
+		self.output_file.write(f'({self.filename}.{label})\n')
+
+	def write_goto(self, label):
+		"""
+		Writes assembly code that effects the goto command (i.e., an 
+		unconditional jump to the specified label).
+		"""
+		self.output_file.write(f'@{self.filename}.{label}\n0;JMP\n')
+
+	def write_if(self, label):
+		"""
+		Writes assembly code that effects the if-goto command (i.e., if the
+		topmost value on the stack != 0, jump to label, else continue).
+		"""
+		self.output_file.write(f'@SP\nAM=M-1\nD=M\n@{self.filename}.{label}\nD;JNE\n')
+
+	def write_call(self, function_name, num_args):
+		"""
+		Writes assembly code that effects the call command.
+		"""
+		# Generate unique label for the return address.
+		identifier = uuid.uuid4().hex[:4]
+		return_label = (f'{function_name}$ret.{identifier}')
+
+		# Create a list to hold all of the .asm symbols that will be pushed 
+		# to the stack to save the state of the calling function.
+		saved_state = ['LCL', 'ARG', 'THIS', 'THAT']
+
+		# Append 5 push commands to asm_code, pushing the value associated
+		# with return_label, followed by the base addresses held in the
+		# calling function's LCL, ARG, THIS, and THAT virtual mem. segments.
+		asm_code = f'@{return_label}\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'
+
+		for i in saved_state:
+			asm_code += f'@{i}\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'
+
+		# Reposition ARG to point to the first of the called function's args,
+		# which were pushed to the global stack prior to VM call command.
+		# NOTE: ARG = M[SP] - (num_args + len(saved_state)).
+		asm_code += f'@5\nD=A\n@{num_args}\nD=D+A\n@SP\nD=M-D\n@ARG\nM=D\n'
+
+		# Reposition LCL to point to the current location of the stack pointer.
+		# This serves as the base address of the called function's local vars.
+		asm_code += '@SP\nD=M\n@LCL\nM=D\n'
+
+		# Transfer control to the called function with an unconditional jump.
+		asm_code += f'@{function_name}\n0;JMP\n'
+
+		# Declare a label for the return address.
+		asm_code += f'({return_label})\n'
+
+		self.output_file.write(asm_code)
+
+	def write_function(self, function_name, num_locals):
+		"""
+		Writes assembly code that effects the function command.
+		"""
+		# Declare a label for the function entry.
+		asm_code = f'({function_name})\n'
+
+		# Initialise local variables by pushing 0 to stack num_locals times
+		for i in range(int(num_locals)):
+			asm_code += f'@0\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'
+
+		self.output_file.write(asm_code)
+
+	def write_return(self):
+		"""
+		Writes assembly code that effects the function command.
+		"""
+		# FRAME = LCL, where FRAME points to the end of the saved state of
+		# the calling function. Use R13 to store FRAME temp. var.
+		asm_code = '@LCL\nD=M\n@R13\nM=D\n'
+
+		# Put the return address in R14 as a temp. var, where RET = M[FRAME-5]
+		asm_code += '@5\nD=D-A\nA=D\nD=M\n@R14\nM=D\n'
+
+		# Since the function will have placed a return value at the top
+		# of the stack, copy this return value for the caller by placing
+		# it in the mem. location pointed to by ARG (i.e., M[ARG] = pop()).
+		asm_code += '@SP\nA=M-1\nD=M\n@ARG\nA=M\nM=D\n'
+
+		# Restore SP of the caller (i.e., M[SP] = M[ARG] + 1).
+		asm_code += 'D=A\n@SP\nM=D+1\n'
+
+		# Restore the state of the caller's THAT, THIS, ARG, and LCL pointers
+		# by resetting base addresses according to the FRAME/R13 temp. var.
+		saved_state = ['THAT', 'THIS', 'ARG', 'LCL']
+		counter = 1
+		for i in saved_state:
+			asm_code += f'@{counter}\nD=A\n@R13\nA=M\nA=A-D\nD=M\n@{i}\nM=D\n'
+			counter += 1
+
+		# Go to return address in the caller's code with unconditional jump.
+		asm_code += '@R14\nA=M\n0;JMP\n'
+
+		self.output_file.write(asm_code)
+
+
+class Initialiser():
+	"""
+	Initialises and runs the VM translator.
+	"""
+
+	def __init__(self, cli):
+		"""
+		All newly_created Initialiser instances have a list of VM files to be
+		translated, which is available as an attribute (.vm_files). Also
+		generates the file name of the .asm file to be written. Class takes
+		the command line argument (cli) as its argument. 
+		"""
+		if '.vm' in cli:
+			ls = [cli]
+			asm_filename = cli.replace('vm', 'asm')
+		else:
+			ls = [cli + '/' + x for x in os.listdir(cli) if '.vm' in x]
+			asm_filename = cli + '/' + cli.split('/')[1] + '.asm'
+
+		self.vm_files = ls
+		self.asm_filename = asm_filename
+
