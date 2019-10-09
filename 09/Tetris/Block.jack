@@ -1,0 +1,227 @@
+/** 
+ * A graphical tetromino. Characterised by a starting location (x, y), size,
+ * type code (determines shape), and set of coordinates. 
+ *
+ * Has methods for drawing, erasing, and rotating a tetromino Block on screen. 
+ * Other methods set Block type based on 4-digit code, find width or height
+ * of the Block, and find the min|max values of the Block's x|y coordinates. 
+ *
+ * Methods for moving the tetromino on the screen HAVE YET TO BE WRITTEN.   
+ */
+
+class Block {
+	
+	field int x, y;           // starting location of Block's top-left corner
+	field int size;    		  // size of individual square in Block
+	field Array type;         // array to hold Block type code
+	field Array coordinates;  // array to hold co's of all squares in Block
+
+	/** Constructs a new Block with given size, type, and coordinates. */
+	constructor Block new(int Asize, int Ax, int Ay) {
+		let size = Asize;
+		let x = Ax;
+		let y = Ay;
+
+		do getType();
+		do getCoordinates();
+
+		return this;
+	}
+
+	/** Deallocates the Block's memory. */
+	method void dispose() {
+		do Memory.deAlloc(this);
+		return;
+	}
+
+	/** Draws the Block to the screen. */
+	method void draw() {
+		var int i;
+		var Array a;
+
+		while (i < 4) {
+			let a = coordinates[i];
+			do Screen.drawRectangle(a[0], a[1], a[2], a[3]);
+			let i = i + 1;
+		}
+
+		return;
+	}
+
+	/** Shows the Block. */
+	method void show() {
+		do Screen.setColor(true);
+		do draw();
+		return;
+	}
+
+	/** Hides the Block. */
+	method void hide() {
+		do Screen.setColor(false);
+		do draw();
+		return;
+	}
+
+	/** Returns tetromino type code by constructing a 4-item array. */
+	method void getType() {
+		let type = Array.new(4);
+		let type[0] = 0;
+		let type[1] = 1;
+		let type[2] = 2;
+		let type[3] = 6;
+		return;
+	}
+
+	/** 
+	 * Constructs a 4x4 matrix (i.e., 2d list) to hold the 
+	 * 4 sets of coordinates needed to draw each square of the tetromino.
+	 * Called only once - namely, when the Block constructor is called.
+	 */
+	method void getCoordinates() {
+		var int i, gap, dx; 	// gap = 2 leads to 2-pixel separation
+		var Array temp;
+
+		let i = 0;
+		let coordinates = Array.new(4);
+
+		while (i < 4) {
+			let coordinates[i] = Array.new(4);
+			let temp = coordinates[i];
+
+			if (type[i] < 4) {
+				let dx = (x + (size * type[i]));
+				let gap = (2 * type[i]);
+
+				let temp[0] = dx + gap;
+				let temp[1] = y;
+				let temp[2] = dx + size + gap;
+				let temp[3] = y + size;
+			}
+			else {
+				let dx = (x + (size * (type[i] - 4)));
+				let gap = (2 * (type[i] - 4));
+
+				let temp[0] = dx + gap;
+				let temp[1] = y + size + 2;
+				let temp[2] = dx + size + gap;
+				let temp[3] = y + (2 * size) + 2;
+			}
+
+			let i = i + 1;
+		}
+
+		return;
+	}
+
+	/**
+	 * Finds the height|width of the Block by (1) appending x|y coordinates 
+	 * from the 4x4 coordinate matrix to an 8-item array; and (2) subtracting
+	 * the minimum value from the maximum value. 0 (width) or 1 (height) 
+	 * are the possible arguments.
+	 */
+	method int getWidthOrHeight(int xOry) {
+		var int i, j;
+		var Array a;
+		var Array temp;
+		var int maximum, minimum;
+		var int k;
+
+		let k = xOry;
+		let i = 0;
+		let j = 0;
+		let a = Array.new(8);
+
+		while (i < 4) {
+			let temp = coordinates[i];
+			let a[j] = temp[k];
+
+			let j = j + 1;
+
+			let a[j] = temp[k + 2];
+
+			let j = j + 1;
+			let i = i + 1; 
+		}
+
+		let maximum = Math.max(
+			a[0], Math.max(
+			a[1], Math.max(
+			a[2], Math.max(
+			a[3], Math.max(
+			a[4], Math.max(
+			a[5], Math.max(
+			a[6], a[7]))))))
+		);
+
+		let minimum = getMinimum(k);
+		return (maximum - minimum);
+	}
+
+	/**
+	 * Appends all x|y coordinates in 4x4 coordinate matrix to an 8-item
+	 * array, then computes minimum. 0 (x) or 1 (y) are the possible arguments.
+	 */
+	method int getMinimum(int xOry) {
+		var int i, j, minimum; 
+		var Array a, temp;		// a holds the 8 x|y coordinates in 4x4 matrix					
+		var int k; 				// control bit for checking whether x|y is used
+
+		let k = xOry;
+		let i = 0;
+		let j = 0;
+		let a = Array.new(8);
+
+		while (i < 4) {
+			let temp = coordinates[i];
+			let a[j] = temp[k];
+			let j = j + 1;
+			let a[j] = temp[k + 2];
+			let j = j + 1;
+			let i = i + 1; 
+		}
+
+		let minimum = Math.min(
+			a[0], Math.min(
+			a[1], Math.min(
+			a[2], Math.min(
+			a[3], Math.min(
+			a[4], Math.min(
+			a[5], Math.min(
+			a[6], a[7]))))))
+		);
+
+		return minimum;
+	}
+
+	/** Rotates the Block 90 degrees clockwise using rotation matrix. */
+	method void rotate() {
+		var Array a;
+		var int i, j, temp, height, width;
+		var int px, py;      // coordinates of the brick's pivot
+
+		let height = getWidthOrHeight(1);
+		let width = getWidthOrHeight(0);
+		let a = coordinates[0];
+		let px = getMinimum(0) + (width / 2);
+		let py = getMinimum(1) + (height / 2);	
+
+		do hide();
+
+		let i = 0;
+
+		while (i < 4) {
+			let a = coordinates[i];
+			let temp = a[0]; 				
+			let a[0] = (px + py - a[1] - size);	
+			let a[1] = (temp + py - px);		
+
+			let a[2] = a[0] + size;
+			let a[3] = a[1] + size; 	
+			
+			let i = i + 1;
+		}
+
+		do show();
+		return;
+	}
+}

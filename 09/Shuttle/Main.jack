@@ -1,0 +1,11 @@
+/** Initialises a new Lunar Lander game and starts running it. */
+
+class Main {
+	function void main() {
+		var ShuttleGame game;
+		let game = ShuttleGame.new();
+		do game.run();
+		do game.dispose();
+		return;
+	}
+}

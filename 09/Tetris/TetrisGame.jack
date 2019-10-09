@@ -1,0 +1,35 @@
+/** Represents a Tetris game. */
+
+class TetrisGame {
+
+	field Block block;
+
+	/** Constructs a new Tetris game. */
+	constructor TetrisGame new() {
+		let block = Block.new(10, 200, 100);
+		return this;
+	}
+
+	/** Deallocates the TetrisGame's memory. */
+	method void dispose() {
+		do block.dispose();
+		do Memory.deAlloc(this);
+		return;
+	}
+
+	/** Starts the game. */
+	method void run() {
+		do block.show();
+		do Sys.wait(1000);
+		do block.rotate();
+		do Sys.wait(1000);
+		do block.rotate();
+		do Sys.wait(1000);
+		do block.rotate();
+		do Sys.wait(1000);
+		do block.rotate();
+		do Sys.wait(1000);
+		do block.rotate();
+		return;
+	}
+}

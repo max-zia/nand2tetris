@@ -1,0 +1,163 @@
+function ShuttleGame.new 0
+push constant 1
+call Memory.alloc 1
+pop pointer 0
+push constant 16
+call Shuttle.new 1
+pop this 0
+push pointer 0
+return
+function ShuttleGame.dispose 0
+push argument 0
+pop pointer 0
+push this 0
+call Shuttle.dispose 1
+pop temp 0
+push pointer 0
+call Memory.deAlloc 1
+pop temp 0
+push constant 0
+return
+function ShuttleGame.createBullet 1
+push argument 0
+pop pointer 0
+push this 0
+call Shuttle.getLocation 1
+push constant 512
+sub
+call Bullet.new 1
+pop local 0
+push local 0
+call Bullet.animate 1
+pop temp 0
+push constant 0
+return
+function ShuttleGame.run 2
+push argument 0
+pop pointer 0
+push constant 0
+pop local 1
+label WHILE_EXP0
+push local 1
+not
+not
+if-goto WHILE_END0
+label WHILE_EXP1
+push local 0
+push constant 0
+eq
+not
+if-goto WHILE_END1
+call Keyboard.keyPressed 0
+pop local 0
+push this 0
+call Shuttle.shuttleGravity 1
+pop temp 0
+push constant 5
+call Sys.wait 1
+pop temp 0
+goto WHILE_EXP1
+label WHILE_END1
+push local 0
+push constant 81
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 0
+not
+pop local 1
+label IF_FALSE0
+push local 0
+push constant 131
+eq
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+label WHILE_EXP2
+push local 0
+push constant 131
+eq
+not
+if-goto WHILE_END2
+call Keyboard.keyPressed 0
+pop local 0
+push this 0
+call Shuttle.moveUp 1
+pop temp 0
+push constant 10
+call Sys.wait 1
+pop temp 0
+goto WHILE_EXP2
+label WHILE_END2
+label IF_FALSE1
+push local 0
+push constant 130
+eq
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+label WHILE_EXP3
+push local 0
+push constant 130
+eq
+not
+if-goto WHILE_END3
+call Keyboard.keyPressed 0
+pop local 0
+push this 0
+call Shuttle.moveLeft 1
+pop temp 0
+push constant 50
+call Sys.wait 1
+pop temp 0
+goto WHILE_EXP3
+label WHILE_END3
+label IF_FALSE2
+push local 0
+push constant 132
+eq
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
+label WHILE_EXP4
+push local 0
+push constant 132
+eq
+not
+if-goto WHILE_END4
+call Keyboard.keyPressed 0
+pop local 0
+push this 0
+call Shuttle.moveRight 1
+pop temp 0
+push constant 50
+call Sys.wait 1
+pop temp 0
+goto WHILE_EXP4
+label WHILE_END4
+label IF_FALSE3
+push local 0
+push constant 129
+eq
+if-goto IF_TRUE4
+goto IF_FALSE4
+label IF_TRUE4
+label WHILE_EXP5
+push local 0
+push constant 129
+eq
+not
+if-goto WHILE_END5
+call Keyboard.keyPressed 0
+pop local 0
+push pointer 0
+call ShuttleGame.createBullet 1
+pop temp 0
+goto WHILE_EXP5
+label WHILE_END5
+label IF_FALSE4
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+return
