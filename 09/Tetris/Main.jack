@@ -4,11 +4,9 @@ class Main {
 	
 	function void main() {
 		var TetrisGame game;
-		do Memory.debugDumpHeap();
 		let game = TetrisGame.new();
 		do game.run();
 		do game.dispose();
-		do Memory.debugDumpHeap();
 		return;
 	}
 }

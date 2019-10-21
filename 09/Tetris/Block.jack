@@ -19,13 +19,13 @@ class Block {
 	field boolean rotation;   // two rotation types (true and false)
 
 	/** Constructs a new Block with given size, type, and coordinates. */
-	constructor Block new(int Asize, int Ax, int Ay) {
+	constructor Block new(int Asize, int Ax, int Ay, Array Aarray) {
 		let size = Asize;
 		let x = Ax;
 		let y = Ay;
 		let rotation = false;
+		let type = Aarray;
 
-		do getType();
 		do getCoordinates();
 
 		return this;
@@ -33,6 +33,11 @@ class Block {
 
 	/** Deallocates the Block's memory. */
 	method void dispose() {
+		do Array.dispose(coordinates[0]);
+		do Array.dispose(coordinates[1]);
+		do Array.dispose(coordinates[2]);
+		do Array.dispose(coordinates[3]);
+		do coordinates.dispose();
 		do Memory.deAlloc(this);
 		return;
 	}
@@ -62,16 +67,6 @@ class Block {
 	method void hide() {
 		do Screen.setColor(false);
 		do draw();
-		return;
-	}
-
-	/** Returns tetromino type code by constructing a 4-item array. */
-	method void getType() {
-		let type = Array.new(4);
-		let type[0] = 0;
-		let type[1] = 1;
-		let type[2] = 2;
-		let type[3] = 5;
 		return;
 	}
 
@@ -145,6 +140,8 @@ class Block {
 		let maximum = getMaximum(k);
 		let minimum = getMinimum(k);
 
+		do a.dispose(); 	// dispose memory allocated for a
+
 		return (maximum - minimum);
 	}
 
@@ -181,6 +178,8 @@ class Block {
 			a[6], a[7]))))))
 		);
 
+		do a.dispose(); 	// dispose memory allocated for a
+
 		return minimum;
 	}
 
@@ -214,10 +213,12 @@ class Block {
 			a[6], a[7]))))))
 		);
 
+		do a.dispose();  	// dispose memory allocated for a
+
 		return maximum;
 	}
 
-	/** Rotates the Block 90 degrees clockwise using rotation matrix. */
+	/** Rotates the Block 90 degrees clockwise. */
 	method void rotate() {
 		var Array a;
 		var int i, j, temp, height, width;
@@ -388,6 +389,9 @@ class Block {
 				let i = i + 1;
 			}
 		}
+
+		do yCoordinates.dispose(); 	// dispose memory allocated for coordinate arrays
+		do xCoordinates.dispose(); 
 
 		return check;
 	}

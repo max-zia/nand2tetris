@@ -5,17 +5,28 @@ class TetrisGame {
 	field Block currentBlock;
 	field Block nextBlock;
 	field boolean exit; 		// true when the game is over
+	field Array typeCodes; 		// matrix of valid tetromino type codes
 
 	/** Constructs a new Tetris game. */
 	constructor TetrisGame new() {
 		let exit = false;
+		do getTypeCodes();
 		return this;
 	}
 
 	/** Deallocates the TetrisGame's memory. */
 	method void dispose() {
+		var int i;
+		let i = 0;
+
+		while (i < 7) {
+			do Array.dispose(typeCodes[i]);
+			let i = i + 1;
+		}
+
 		do currentBlock.dispose();
 		do nextBlock.dispose();
+		do typeCodes.dispose();
 		do Memory.deAlloc(this);
 		return;
 	}
@@ -28,6 +39,69 @@ class TetrisGame {
 		do Screen.drawLine(281, 6, 281, 250);
 
 		return;
+	}
+
+	method void getTypeCodes() {
+		var int i;
+		var Array temp;
+
+		let typeCodes = Array.new(7);
+
+		while (i < 7) {
+			let typeCodes[i] = Array.new(4);
+			let i = i + 1;
+		}
+
+		let temp = typeCodes[0]; 	// straight
+		let temp[0] = 0;
+		let temp[1] = 1;
+		let temp[2] = 2;
+		let temp[3] = 3;
+
+		let temp = typeCodes[1];	// inverse L
+		let temp[0] = 0;
+		let temp[1] = 1;
+		let temp[2] = 2;
+		let temp[3] = 6;
+
+		let temp = typeCodes[2]; 	// L
+		let temp[0] = 0;
+		let temp[1] = 1;
+		let temp[2] = 2;
+		let temp[3] = 4;
+
+		let temp = typeCodes[3]; 	// Z
+		let temp[0] = 0;
+		let temp[1] = 1;
+		let temp[2] = 5;
+		let temp[3] = 6;
+
+		let temp = typeCodes[4]; 	// S
+		let temp[0] = 1;
+		let temp[1] = 2;
+		let temp[2] = 4;
+		let temp[3] = 5;
+
+		let temp = typeCodes[5]; 	// T
+		let temp[0] = 0;
+		let temp[1] = 1;
+		let temp[2] = 2;
+		let temp[3] = 5;
+
+		let temp = typeCodes[6]; 	// O
+		let temp[0] = 0;
+		let temp[1] = 1;
+		let temp[2] = 4;
+		let temp[3] = 5;
+
+		return;
+	}
+
+	/** Returns tetromino type code by constructing a 4-item array. */
+	method Array getType(int Arandom) {
+		var int random;
+		let random = Arandom;
+		return (typeCodes[random]);
 	}
 
 	/** Checks what key was pressed and responds appropriately. */
@@ -51,19 +125,48 @@ class TetrisGame {
 		return;
 	}
 
+	/** Shows start menu and sets seed for PRNG. */
+	method void showMenu() {
+		var boolean startScreen;
+		var int seed;
+		var char key;
+
+		do Output.moveCursor(10,27);
+	    do Output.printString("Hit ENTER to start");
+
+	    let startScreen = true;
+	    let seed = 0;
+		while (startScreen) {
+			let key = Keyboard.keyPressed();
+			if (key = 128) {
+				do Screen.clearScreen();
+				let startScreen = false;
+			}
+			else {
+				let seed = seed + 1;
+			}
+		}
+		do Random.setSeed(seed);
+		return;
+	}
+
 
 	/** Starts the game and handle's inputs that control movement direction. */
 	method void run() {
 		var char key;
-		var int i;
+		var int i, random;
 		var boolean atBottom;
 
+		do showMenu();
 		do drawBoard();
 
 		let atBottom = false;
 
-		let currentBlock = Block.new(10, 160, 9);
-		let nextBlock = Block.new(10, 160, 9);
+		let random = Random.randRange(6);
+		let currentBlock = Block.new(10, 160, 9, getType(random));
+
+		let random = Random.randRange(6);
+		let nextBlock = Block.new(10, 160, 9, getType(random));
 
 		while (~exit) {
 
@@ -95,8 +198,13 @@ class TetrisGame {
 				do Sys.wait(50);
 			}
 
+			do currentBlock.dispose();
 			let currentBlock = nextBlock;
-			let nextBlock = Block.new(10, 160, 9);
+
+			let random = Random.randRange(6);
+			do Output.printInt(random);
+			do Output.println();
+			let nextBlock = Block.new(10, 160, 9, getType(random));
 			let atBottom = false;
 		}
 

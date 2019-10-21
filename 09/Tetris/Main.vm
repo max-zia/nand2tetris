@@ -1,6 +1,4 @@
 function Main.main 1
-call Memory.debugDumpHeap 0
-pop temp 0
 call TetrisGame.new 0
 pop local 0
 push local 0
@@ -8,8 +6,6 @@ call TetrisGame.run 1
 pop temp 0
 push local 0
 call TetrisGame.dispose 1
-pop temp 0
-call Memory.debugDumpHeap 0
 pop temp 0
 push constant 0
 return

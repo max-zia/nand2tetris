@@ -10,9 +10,8 @@ push argument 2
 pop this 1
 push constant 0
 pop this 6
-push pointer 0
-call Block.getType 1
-pop temp 0
+push argument 3
+pop this 4
 push pointer 0
 call Block.getCoordinates 1
 pop temp 0
@@ -21,6 +20,37 @@ return
 function Block.dispose 0
 push argument 0
 pop pointer 0
+push constant 0
+push this 5
+add
+pop pointer 1
+push that 0
+call Array.dispose 1
+pop temp 0
+push constant 1
+push this 5
+add
+pop pointer 1
+push that 0
+call Array.dispose 1
+pop temp 0
+push constant 2
+push this 5
+add
+pop pointer 1
+push that 0
+call Array.dispose 1
+pop temp 0
+push constant 3
+push this 5
+add
+pop pointer 1
+push that 0
+call Array.dispose 1
+pop temp 0
+push this 5
+call Array.dispose 1
+pop temp 0
 push pointer 0
 call Memory.deAlloc 1
 pop temp 0
@@ -92,46 +122,6 @@ pop temp 0
 push pointer 0
 call Block.draw 1
 pop temp 0
-push constant 0
-return
-function Block.getType 0
-push argument 0
-pop pointer 0
-push constant 4
-call Array.new 1
-pop this 4
-push constant 0
-push this 4
-add
-push constant 0
-pop temp 0
-pop pointer 1
-push temp 0
-pop that 0
-push constant 1
-push this 4
-add
-push constant 1
-pop temp 0
-pop pointer 1
-push temp 0
-pop that 0
-push constant 2
-push this 4
-add
-push constant 2
-pop temp 0
-pop pointer 1
-push temp 0
-pop that 0
-push constant 3
-push this 4
-add
-push constant 5
-pop temp 0
-pop pointer 1
-push temp 0
-pop that 0
 push constant 0
 return
 function Block.getCoordinates 4
@@ -384,6 +374,9 @@ push pointer 0
 push local 6
 call Block.getMinimum 2
 pop local 5
+push local 2
+call Array.dispose 1
+pop temp 0
 push local 4
 push local 5
 sub
@@ -500,6 +493,9 @@ call Math.min 2
 call Math.min 2
 call Math.min 2
 pop local 2
+push local 3
+call Array.dispose 1
+pop temp 0
 push local 2
 return
 function Block.getMaximum 6
@@ -614,6 +610,9 @@ call Math.max 2
 call Math.max 2
 call Math.max 2
 pop local 2
+push local 3
+call Array.dispose 1
+pop temp 0
 push local 2
 return
 function Block.rotate 9
@@ -1241,5 +1240,11 @@ pop local 0
 label IF_END0
 goto WHILE_EXP1
 label WHILE_END1
+push local 2
+call Array.dispose 1
+pop temp 0
+push local 3
+call Array.dispose 1
+pop temp 0
 push local 4
 return

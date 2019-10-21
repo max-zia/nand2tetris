@@ -2,21 +2,21 @@ class ConvertToBin {
     
     /**
      * Converts the value in RAM[16000] to binary, and deposits the results 
-     * of the conversion in RAM[8001]...RAM[8016].
+     * of the conversion in RAM[16001]...RAM[16016].
      */
     function void main(int Avalue) {
         var int value;
         let value = Avalue;
 	    do Memory.poke(16000, value);
 
-        do ConvertToBin.fillMemory(8001, 16, -1); // sets RAM[8001]..RAM[8016] to -1
+        do ConvertToBin.fillMemory(16001, 16, -1); // sets RAM[16001]..RAM[16016] to -1
         let value = Memory.peek(16000);    // reads a value from RAM[16000]
         do ConvertToBin.convert(value);           // performs the conversion
         return;
     }
     
     /** Converts the given decimal value to binary, and puts 
-     *  the resulting bits in RAM[8001]..RAM[8016]. */
+     *  the resulting bits in RAM[16001]..RAM[16016]. */
     function void convert(int value) {
     	var int mask, position;
     	var boolean loop;
