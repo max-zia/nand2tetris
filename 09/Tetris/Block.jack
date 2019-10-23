@@ -70,6 +70,45 @@ class Block {
 		return;
 	}
 
+	/** Prints the block off-screen (for showing next block). */
+	method void showNext() {
+		var Array a;
+		var int i;
+
+		let i = 0;
+		while (i < 4) {
+			let a = coordinates[i];
+			let a[0] = a[0] + 162;
+			let a[2] = a[2] + 162;
+			let a[1] = a[1] + 110;
+			let a[3] = a[3] + 110;
+			let i = i + 1;
+		}
+
+		do show();
+
+		return;
+	}
+
+	/** Resets coordinates back to original after showNext() altered them. */
+	method void reset() {
+		var Array a;
+		var int i;
+
+		do hide();
+
+		let i = 0;
+		while (i < 4) {
+			let a = coordinates[i];
+			let a[0] = a[0] - 162;
+			let a[2] = a[2] - 162;
+			let a[1] = a[1] - 110;
+			let a[3] = a[3] - 110;
+			let i = i + 1;
+		}
+		return;
+	}
+
 	/** 
 	 * Constructs a 4x4 matrix (i.e., 2d list) to hold the 
 	 * 4 sets of coordinates needed to draw each square of the tetromino.
@@ -222,40 +261,61 @@ class Block {
 	method void rotate() {
 		var Array a;
 		var int i, j, temp, height, width;
+		var boolean overRotation;
 		var int px, py;      // px, py are coordinates of the Block's pivot
 		var int skew;		 // on each rotation, skew ensures that the Block's
 							 // squares align with 20x10 board.
 
-		let height = getWidthOrHeight(1);
-		let width = getWidthOrHeight(0);
-		let a = coordinates[0];
-		let px = getMinimum(0) + (width / 2);
-		let py = getMinimum(1) + (height / 2);	
-		let i = 0;
-
-		if (~(rotation)) {
-			let skew = -6;
+		if ((type[0] = 0) & (type[1] = 1) & (type[2] = 4) & (type[3] = 5)) {
+			// do nothing because the tetromino is a square
 		}
 		else {
-			let skew = 6;
+			let overRotation = false;
+			let height = getWidthOrHeight(1);
+			let width = getWidthOrHeight(0);
+			let a = coordinates[0];
+			let px = getMinimum(0) + (width / 2);
+			let py = getMinimum(1) + (height / 2);	
+			let i = 0;
+
+			if (~(rotation)) {
+				let skew = -6;
+			}
+			else {
+				let skew = 6;
+			}
+
+			do hide();
+
+			while (i < 4) {
+				let a = coordinates[i];
+				let temp = a[0]; 				
+				let a[0] = (px + py - a[1] - size) + skew;	// rotate top-left corner
+				let a[1] = (temp + py - px) + skew;	
+
+				let a[2] = a[0] + size;					// set coordinates for
+				let a[3] = a[1] + size; 				// bottom-right corner
+
+				if (a[2] > 270) {
+					let overRotation = true;
+				}
+				
+				let i = i + 1;
+			}
+
+			if (overRotation) {
+				let i = 0;
+				while (i < 4) {
+					let a = coordinates[i];
+					let a[0] = a[0] - 24;
+					let a[2] = a[2] - 24;
+					let i = i + 1;
+				}	
+			}
+
+			let rotation = ~(rotation);
+			do show();
 		}
-
-		do hide();
-
-		while (i < 4) {
-			let a = coordinates[i];
-			let temp = a[0]; 				
-			let a[0] = (px + py - a[1] - size) + skew;	// rotate top-left corner
-			let a[1] = (temp + py - px) + skew;	
-
-			let a[2] = a[0] + size;					// set coordinates for
-			let a[3] = a[1] + size; 				// bottom-right corner
-			
-			let i = i + 1;
-		}
-
-		let rotation = ~(rotation);
-		do show();
 		
 		return;
 	}
@@ -296,8 +356,8 @@ class Block {
 				let i = i + 1;
 			}
 		}
-
 		do show();
+
 		return;
 	}
 
@@ -395,6 +455,4 @@ class Block {
 
 		return check;
 	}
-
-
 }

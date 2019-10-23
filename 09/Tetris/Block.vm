@@ -124,6 +124,174 @@ call Block.draw 1
 pop temp 0
 push constant 0
 return
+function Block.showNext 2
+push argument 0
+pop pointer 0
+push constant 0
+pop local 1
+label WHILE_EXP0
+push local 1
+push constant 4
+lt
+not
+if-goto WHILE_END0
+push local 1
+push this 5
+add
+pop pointer 1
+push that 0
+pop local 0
+push constant 0
+push local 0
+add
+push constant 0
+push local 0
+add
+pop pointer 1
+push that 0
+push constant 162
+add
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 2
+push local 0
+add
+push constant 2
+push local 0
+add
+pop pointer 1
+push that 0
+push constant 162
+add
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 1
+push local 0
+add
+push constant 1
+push local 0
+add
+pop pointer 1
+push that 0
+push constant 110
+add
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 3
+push local 0
+add
+push constant 3
+push local 0
+add
+pop pointer 1
+push that 0
+push constant 110
+add
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 1
+push constant 1
+add
+pop local 1
+goto WHILE_EXP0
+label WHILE_END0
+push pointer 0
+call Block.show 1
+pop temp 0
+push constant 0
+return
+function Block.reset 2
+push argument 0
+pop pointer 0
+push pointer 0
+call Block.hide 1
+pop temp 0
+push constant 0
+pop local 1
+label WHILE_EXP0
+push local 1
+push constant 4
+lt
+not
+if-goto WHILE_END0
+push local 1
+push this 5
+add
+pop pointer 1
+push that 0
+pop local 0
+push constant 0
+push local 0
+add
+push constant 0
+push local 0
+add
+pop pointer 1
+push that 0
+push constant 162
+sub
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 2
+push local 0
+add
+push constant 2
+push local 0
+add
+pop pointer 1
+push that 0
+push constant 162
+sub
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 1
+push local 0
+add
+push constant 1
+push local 0
+add
+pop pointer 1
+push that 0
+push constant 110
+sub
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 3
+push local 0
+add
+push constant 3
+push local 0
+add
+pop pointer 1
+push that 0
+push constant 110
+sub
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 1
+push constant 1
+add
+pop local 1
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+return
 function Block.getCoordinates 4
 push argument 0
 pop pointer 0
@@ -615,9 +783,47 @@ call Array.dispose 1
 pop temp 0
 push local 2
 return
-function Block.rotate 9
+function Block.rotate 10
 push argument 0
 pop pointer 0
+push constant 0
+push this 4
+add
+pop pointer 1
+push that 0
+push constant 0
+eq
+push constant 1
+push this 4
+add
+pop pointer 1
+push that 0
+push constant 1
+eq
+and
+push constant 2
+push this 4
+add
+pop pointer 1
+push that 0
+push constant 4
+eq
+and
+push constant 3
+push this 4
+add
+pop pointer 1
+push that 0
+push constant 5
+eq
+and
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+goto IF_END0
+label IF_FALSE0
+push constant 0
+pop local 6
 push pointer 0
 push constant 1
 call Block.getWidthOrHeight 2
@@ -639,7 +845,7 @@ push local 5
 push constant 2
 call Math.divide 2
 add
-pop local 6
+pop local 7
 push pointer 0
 push constant 1
 call Block.getMinimum 2
@@ -647,22 +853,22 @@ push local 4
 push constant 2
 call Math.divide 2
 add
-pop local 7
+pop local 8
 push constant 0
 pop local 1
 push this 6
 not
-if-goto IF_TRUE0
-goto IF_FALSE0
-label IF_TRUE0
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
 push constant 6
 neg
-pop local 8
-goto IF_END0
-label IF_FALSE0
+pop local 9
+goto IF_END1
+label IF_FALSE1
 push constant 6
-pop local 8
-label IF_END0
+pop local 9
+label IF_END1
 push pointer 0
 call Block.hide 1
 pop temp 0
@@ -687,8 +893,8 @@ pop local 3
 push constant 0
 push local 0
 add
-push local 6
 push local 7
+push local 8
 add
 push constant 1
 push local 0
@@ -698,7 +904,7 @@ push that 0
 sub
 push this 2
 sub
-push local 8
+push local 9
 add
 pop temp 0
 pop pointer 1
@@ -708,11 +914,11 @@ push constant 1
 push local 0
 add
 push local 3
-push local 7
-add
-push local 6
-sub
 push local 8
+add
+push local 7
+sub
+push local 9
 add
 pop temp 0
 pop pointer 1
@@ -746,18 +952,86 @@ pop temp 0
 pop pointer 1
 push temp 0
 pop that 0
+push constant 2
+push local 0
+add
+pop pointer 1
+push that 0
+push constant 270
+gt
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push constant 0
+not
+pop local 6
+label IF_FALSE2
 push local 1
 push constant 1
 add
 pop local 1
 goto WHILE_EXP0
 label WHILE_END0
+push local 6
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
+push constant 0
+pop local 1
+label WHILE_EXP1
+push local 1
+push constant 4
+lt
+not
+if-goto WHILE_END1
+push local 1
+push this 5
+add
+pop pointer 1
+push that 0
+pop local 0
+push constant 0
+push local 0
+add
+push constant 0
+push local 0
+add
+pop pointer 1
+push that 0
+push constant 24
+sub
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 2
+push local 0
+add
+push constant 2
+push local 0
+add
+pop pointer 1
+push that 0
+push constant 24
+sub
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 1
+push constant 1
+add
+pop local 1
+goto WHILE_EXP1
+label WHILE_END1
+label IF_FALSE3
 push this 6
 not
 pop this 6
 push pointer 0
 call Block.show 1
 pop temp 0
+label IF_END0
 push constant 0
 return
 function Block.setDirection 0

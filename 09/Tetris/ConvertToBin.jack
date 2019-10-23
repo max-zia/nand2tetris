@@ -1,3 +1,5 @@
+/** Written by Noam Nissan, adapted to TetrisGame by Max Zia  */
+
 class ConvertToBin {
     
     /**
