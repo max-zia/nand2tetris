@@ -1,4 +1,4 @@
-/** Written by Mark Armbrust, 2012.*/
+/** Written by Mark Armbrust */
 
 class Random {
     static int seed;
