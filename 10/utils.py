@@ -39,7 +39,7 @@ class JackTokeniser():
         self.tokens = tokens        # array for all tokens (as field var)
         self.token_index = 0        # pointer for current token (as field var)
     
-    def get_current_token(self):
+    def current_token(self):
         """
         Returns the token that the token_index pointer is pointing to.
         """
@@ -76,34 +76,34 @@ class JackTokeniser():
         ]
 
         # Type tests
-        if self.get_current_token() in keywords:
+        if self.current_token() in keywords:
             return 'KEYWORD'
-        elif self.get_current_token() in symbols:
+        elif self.current_token() in symbols:
             return 'SYMBOL'
-        elif '"' in self.get_current_token():
+        elif '"' in self.current_token():
             return 'STRING_CONST'
         else:
             try:
-                int(self.get_current_token())
+                int(self.current_token())
                 return 'INT_CONST'
             except ValueError:
                 return 'IDENTIFIER'
 
     # Methods for returning the value of the current token.
     def keyword(self):
-        return self.get_current_token()
+        return self.current_token()
 
     def symbol(self):
-        return self.get_current_token()
+        return self.current_token()
     
     def identifier(self):
-        return self.get_current_token()
+        return self.current_token()
     
     def int_val(self):
-        return int(self.get_current_token())
+        return int(self.current_token())
     
     def string_val(self):
-        return self.get_current_token()[1:-1]
+        return self.current_token()[1:-1]
 
 
 class CompilationEngine():
@@ -175,7 +175,7 @@ class CompilationEngine():
         that syntax error checking could certainly be improved here.
         """
         for token in tokens:
-            if self.tokeniser.get_current_token() in token.split("|") or (
+            if self.tokeniser.current_token() in token.split("|") or (
                 ("varName" or "subroutineName" or "className" in token.split("|")) 
                 and (self.tokeniser.token_type() == "IDENTIFIER")) or (
                 ("INT_CONST" or "STRING_CONST" or "KEYWORD" in token.split("|"))
@@ -183,7 +183,7 @@ class CompilationEngine():
                 self.write_current_token()
                 self.tokeniser.advance()
             else:
-                sys.exit(f"SyntaxError: expected {token} not {self.tokeniser.get_current_token()}")
+                sys.exit(f"SyntaxError: expected {token} not {self.tokeniser.current_token()}")
     
     # Methods for compiling statements. 
     def compile_statements(self):
@@ -201,8 +201,8 @@ class CompilationEngine():
 
         self.output_file.write("<statements>\n")
         while True:
-            dispatcher[self.tokeniser.get_current_token()]()
-            if (self.tokeniser.get_current_token() not in dispatcher):
+            dispatcher[self.tokeniser.current_token()]()
+            if (self.tokeniser.current_token() not in dispatcher):
                 break
         self.output_file.write("</statements>\n")
 
@@ -213,7 +213,7 @@ class CompilationEngine():
         self.output_file.write("<letStatement>\n")
         self.eat(["let", "varName"])
 
-        if self.tokeniser.get_current_token() == "[":
+        if self.tokeniser.current_token() == "[":
             self.eat(["["])
             self.compile_expression()
             self.eat(["]"])
@@ -237,7 +237,7 @@ class CompilationEngine():
         
         # Check for trailing else clause
         try:
-            if self.tokeniser.get_current_token() == "else":
+            if self.tokeniser.current_token() == "else":
                 self.eat(["else", "{"])
                 self.compile_statements()
                 self.eat(["}"])
@@ -276,7 +276,7 @@ class CompilationEngine():
         self.eat(["return"])
         
         # Check whether the return statement returns an expression
-        if self.tokeniser.get_current_token() != ";":
+        if self.tokeniser.current_token() != ";":
             self.compile_expression()
         
         self.eat([";"])
@@ -294,17 +294,17 @@ class CompilationEngine():
         self.eat(["class", "className", "{"])
 
         # Compile any class variables
-        if self.tokeniser.get_current_token() in class_vars:
+        if self.tokeniser.current_token() in class_vars:
             while True:
                 self.compile_class_var_dec()
-                if self.tokeniser.get_current_token() not in class_vars:
+                if self.tokeniser.current_token() not in class_vars:
                     break
         
         # Compile any subroutines 
-        if self.tokeniser.get_current_token() in subroutines:
+        if self.tokeniser.current_token() in subroutines:
             while True:
                 self.compile_subroutine()
-                if self.tokeniser.get_current_token() not in subroutines:
+                if self.tokeniser.current_token() not in subroutines:
                     break
 
         self.eat(["}"])
@@ -318,10 +318,10 @@ class CompilationEngine():
         self.eat(["static|field", "int|char|boolean|className", "varName"])
 
         # Check for multiple variable declarations of same type
-        if self.tokeniser.get_current_token() != ";":
+        if self.tokeniser.current_token() != ";":
             while True:
                 self.eat([",", "varName"])
-                if self.tokeniser.get_current_token() == ";":
+                if self.tokeniser.current_token() == ";":
                     break
 
         self.eat(";")
@@ -341,17 +341,17 @@ class CompilationEngine():
         self.output_file.write("<subroutineBody>\n")
         self.eat(["{"])
 
-        if self.tokeniser.get_current_token() == "var":
+        if self.tokeniser.current_token() == "var":
             while True:
                 self.compile_var_dec()
-                if self.tokeniser.get_current_token() != "var":
+                if self.tokeniser.current_token() != "var":
                     break
         
         statement_types = ["let", "if", "while", "do", "return"] 
-        if self.tokeniser.get_current_token() in statement_types:
+        if self.tokeniser.current_token() in statement_types:
             while True:
                 self.compile_statements()
-                if self.tokeniser.get_current_token() not in statement_types:
+                if self.tokeniser.current_token() not in statement_types:
                     break 
 
         self.eat(["}"])
@@ -364,10 +364,10 @@ class CompilationEngine():
         """
         self.output_file.write("<parameterList>\n")
         
-        if self.tokeniser.get_current_token() != ")":
+        if self.tokeniser.current_token() != ")":
             while True:
                 self.eat(["int|char|boolean|className", "varName"])
-                if self.tokeniser.get_current_token() == ")":
+                if self.tokeniser.current_token() == ")":
                     break
                 self.eat([","])
 
@@ -381,10 +381,10 @@ class CompilationEngine():
         self.eat(["var", "int|char|boolean|className", "varName"])
 
         # Check for multiple variable declarations of same type
-        if self.tokeniser.get_current_token() != ";":
+        if self.tokeniser.current_token() != ";":
             while True:
                 self.eat([",", "varName"])
-                if self.tokeniser.get_current_token() == ";":
+                if self.tokeniser.current_token() == ";":
                     break
 
         self.eat([";"])
@@ -414,11 +414,11 @@ class CompilationEngine():
         self.compile_term()
 
         # Check for multi-component term
-        if self.tokeniser.get_current_token() in op:
+        if self.tokeniser.current_token() in op:
             while True:
-                self.eat([self.tokeniser.get_current_token()])
+                self.eat([self.tokeniser.current_token()])
                 self.compile_term()
-                if self.tokeniser.get_current_token() not in op:
+                if self.tokeniser.current_token() not in op:
                     break
 
         self.output_file.write("</expression>\n")
@@ -429,10 +429,10 @@ class CompilationEngine():
         """
         self.output_file.write("<expressionList>\n")
 
-        if self.tokeniser.get_current_token() != ")":
+        if self.tokeniser.current_token() != ")":
             while True:
                 self.compile_expression()
-                if self.tokeniser.get_current_token() == ")":
+                if self.tokeniser.current_token() == ")":
                     break
                 self.eat([","])
 
@@ -447,24 +447,30 @@ class CompilationEngine():
         # If current token is an identifier, test whether it is a variable,
         # an array entry, or a subroutine call by looking ahead one token.
         if self.tokeniser.token_type() == "IDENTIFIER":
-            if self.tokeniser.tokens[self.tokeniser.token_index + 1] == "[":             # array entry
+            # array entry
+            if self.tokeniser.tokens[self.tokeniser.token_index + 1] == "[":
                 self.eat(["varName"])
                 self.eat(["["])
                 self.compile_expression()
                 self.eat(["]"])
-            elif self.tokeniser.tokens[self.tokeniser.token_index + 1] == ("." or "("):    # subroutine call
+            # subroutine call
+            elif self.tokeniser.tokens[self.tokeniser.token_index + 1] == ("." or "("):
                 self.compile_subroutine_call()
-            else:                                           # variable
+            # variable
+            else:                                   
                 self.eat(["varName"])
         
         else:
-            if self.tokeniser.get_current_token() == "(":             # (expression)
+            # ( expression )
+            if self.tokeniser.current_token() == "(":
                 self.eat(["("])
                 self.compile_expression()
                 self.eat(")")
-            elif self.tokeniser.get_current_token() in ["-", "~"]:    # unaryOp term
+            # unary operator term
+            elif self.tokeniser.current_token() in ["-", "~"]:
                 self.eat(["-|~"])
                 self.compile_term()
+            # constant
             else:
                 self.eat(["STRING_CONST|INT_CONST|KEYWORD"])
         
