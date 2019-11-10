@@ -3,7 +3,7 @@ import re       # re.split(pattern, string) splits string by pattern
 import sys      # sys.exit() raised on syntax error
 from helpers import collapse_string_constants
 
-class JackTokeniser():
+class JackTokeniser:
     """
     Removes all comments and whitespace from the input stream and breaks it
     into Jack-language tokens, as specified by the Jack grammar.
@@ -105,13 +105,13 @@ class JackTokeniser():
         return self.current_token()[1:-1]
 
 
-class CompilationEngine():
+class CompilationEngine:
     """
     Effects the compilation output. Takes a JackTokeniser and emits its 
     parsed structure into an output file.
     """
 
-    def __init__(self, tokeniser, symbol_table, output_file):
+    def __init__(self, tokeniser, symbol_table):
         """
         Initialises all instances with a tokeniser and an open output file.
         """
@@ -370,7 +370,7 @@ class CompilationEngine():
         self.output_file.write("<subroutineDec>\n")
         
         # Reset the subroutine_scope symbol table for each new subroutine
-        self.symbol_table.startSubroutine()
+        self.symbol_table.start_subroutine()
 
         # The first argument for any method must be a reference to the object
         # on which the method is supposed to operate.
@@ -566,7 +566,7 @@ class SymbolTable:
             "VAR": 0
         }
     
-    def startSubroutine(self):
+    def start_subroutine(self):
         """
         Starts a new subroutine scope (i.e., resets self.subroutine_scope).
         """
@@ -589,6 +589,17 @@ class SymbolTable:
             self.subroutine_scope[name] = [type, kind, index]
             self.subroutine_indices[kind] += 1
     
+    def var_count(self, kind):
+        """
+        Returns the number of variables of the given kind already defined
+        in the current scope.
+        """
+        i = 0
+        for k, v in self.subroutine_scope:
+            if subroutine_scope[k][1] == kind:
+                i += 1
+        return i
+
     def index_of(self, name):
         """
         Returns the index assigned to the named identifier.
@@ -617,7 +628,61 @@ class SymbolTable:
             return self.class_scope[name][1]
 
 
-class Initialiser():
+class VMWriter:
+    """
+    Emits VM commands into a file, using the VM command syntax.
+    """
+
+    def __init__(self, output_file):
+        """
+        Creates a new file and prepares it for writing.
+        """
+        self.output_file = open(output_file, 'w')
+
+    def close(self):
+        """
+        Closes the output_file.
+        """
+        self.output_file.close()
+    
+    def write_push(self, segment, index):
+        """
+        Writes a VM push command.
+        """
+        self.output_file.write(f"push {segment} {index}\n")
+    
+    def write_push(self, segment, index):
+        """
+        Writes a VM pop command.
+        """
+        self.output_file.write(f"pop {segment} {index}\n")
+    
+    def write_function(self, name, n_locals):
+        """
+        Writes a VM function command.
+        """
+        self.output_file.write(f"function {name} {n_locals}\n")
+    
+    def write_call(self, name, n_args):
+        """
+        Writes a VM call command.
+        """
+        self.output_file.write(f"call {name} {n_args}\n")
+    
+    def write_arithmetic(self, command):
+        """
+        Writes a VM arithmetic command.
+        """
+        self.output_file.write(f"{command}\n")
+    
+    def write_return(self):
+        """
+        Writes a VM return command.
+        """
+        self.output_file.write("return\n")
+
+
+class Initialiser:
     """
     Facilitates access to the .jack files that are to be translated.
     """
