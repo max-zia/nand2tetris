@@ -26,14 +26,12 @@
 </identifier>
 <symbol> ( </symbol>
 <expressionList>
-<expression>
 <term>
 <integerConstant> 1 </integerConstant>
 </term>
 <symbol> + </symbol>
 <term>
 <symbol> ( </symbol>
-<expression>
 <term>
 <integerConstant> 2 </integerConstant>
 </term>
@@ -41,10 +39,8 @@
 <term>
 <integerConstant> 3 </integerConstant>
 </term>
-</expression>
 <symbol> ) </symbol>
 </term>
-</expression>
 </expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>

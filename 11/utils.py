@@ -281,6 +281,11 @@ class CompilationEngine:
         self.eat([";"])
         self.output_file.write("</doStatement>\n")
 
+        # When compiling a do "sub" statement, where "sub" is a void method
+        # or function, the caller of the corresponding VM function must pop
+        # (and ignore) the returned value (which is always the constant 0).
+        self.vm_writer.write_pop("temp", 0)
+
     def compile_while(self):
         """
         Compiles a while statement.
@@ -377,6 +382,7 @@ class CompilationEngine:
 
         # Begin compiling subroutine declaration
         self.eat(["constructor|function|method"])
+        return_type = self.tokeniser.current_token()
         self.eat(["int|char|boolean|void"])
         
         # Get subroutine name and continue
@@ -395,7 +401,7 @@ class CompilationEngine:
                 if self.tokeniser.current_token() != "var":
                     break
 
-        # WRITE TO VM FILE
+        # WRITE FUNCTION NAME TO VM FILE
         n_locals = self.symbol_table.var_count("VAR") 
         self.vm_writer.write_function(name, n_locals)
         
@@ -406,6 +412,11 @@ class CompilationEngine:
                 self.compile_statements()
                 if self.tokeniser.current_token() not in statement_types:
                     break 
+
+        # WRITE RETURN STATEMENT TO VM FILE
+        if return_type == "void":
+            self.vm_writer.write_push("constant", 0)
+            self.vm_writer.write_return()
 
         self.eat(["}"])
 
@@ -475,20 +486,34 @@ class CompilationEngine:
         """
         Compiles an expression.
         """
-        op = ["+", "-", "*", "/", "&", "|", "<", ">", "="]
+        operators = {
+            "+": "add", 
+            "-": "sub",
+            "*": "call Math.multiply 2",
+            "/": "call Math.divide 2",
+            "&": "and",
+            "|": "or",
+            "<": "lt", 
+            ">": "gt",
+            "=": "eq"
+        }
 
-        self.output_file.write("<expression>\n")
         self.compile_term()
 
-        # Check for multi-component term
-        if self.tokeniser.current_token() in op:
+        # Check for multi-component term and write expression to file in
+        # reverse Polish notation (i.e., operator comes last).
+        if self.tokeniser.current_token() in operators:
             while True:
+                operator = self.tokeniser.current_token()
                 self.eat([self.tokeniser.current_token()])
                 self.compile_term()
-                if self.tokeniser.current_token() not in op:
-                    break
 
-        self.output_file.write("</expression>\n")
+                # WRITE TO VM FILE
+                self.vm_writer.write_arithmetic(operators[operator])
+                
+                # Check for another operator in the expression
+                if self.tokeniser.current_token() not in operators:
+                    break
 
     def compile_expression_list(self):
         """
@@ -515,6 +540,11 @@ class CompilationEngine:
         """
         Compiles a term.
         """
+        unary_operators = {
+            "-": "neg",
+            "~": "not"
+        }
+
         self.output_file.write("<term>\n")  
 
         # If current token is an identifier, test whether it is a variable,
@@ -540,11 +570,15 @@ class CompilationEngine:
                 self.compile_expression()
                 self.eat(")")
             # unary operator term
-            elif self.tokeniser.current_token() in ["-", "~"]:
+            elif self.tokeniser.current_token() in unary_operators:
+                # WRITE UNARY_OP EXPRESSION TO VM FILE
+                command = self.tokeniser.current_token()
                 self.eat(["-|~"])
                 self.compile_term()
+                self.vm_writer.write_arithmetic(unary_operators[command])
             # constant
             else:
+                # WRITE INT_CONST EXPRESSION TO VM FILE
                 value = self.tokeniser.current_token()
                 self.vm_writer.write_push("constant", value) 
                 self.eat(["STRING_CONST|INT_CONST|KEYWORD"])
