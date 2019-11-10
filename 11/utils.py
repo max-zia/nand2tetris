@@ -111,11 +111,12 @@ class CompilationEngine:
     parsed structure into an output file.
     """
 
-    def __init__(self, tokeniser, symbol_table):
+    def __init__(self, tokeniser, symbol_table, output_file, vm_writer):
         """
         Initialises all instances with a tokeniser and an open output file.
         """
         self.tokeniser = tokeniser
+        self.vm_writer = vm_writer
         self.symbol_table = symbol_table
         self.output_file = open(output_file, 'w')
     
@@ -366,9 +367,6 @@ class CompilationEngine:
         """
         Compiles a complete method, function, or constructor.
         """
-        # Compile subroutine declaration and update symbol table
-        self.output_file.write("<subroutineDec>\n")
-        
         # Reset the subroutine_scope symbol table for each new subroutine
         self.symbol_table.start_subroutine()
 
@@ -377,22 +375,31 @@ class CompilationEngine:
         if self.tokeniser.current_token() == "method":
             self.symbol_table.define("this", self.tokeniser.tokens[1], "ARG")
 
-        # Compile rest of subroutine declaration
+        # Begin compiling subroutine declaration
         self.eat(["constructor|function|method"])
-        self.eat(["int|char|boolean|void", "varName", "("])
+        self.eat(["int|char|boolean|void"])
+        
+        # Get subroutine name and continue
+        name = self.tokeniser.tokens[1] + '.' + self.tokeniser.current_token()
+        self.eat(["varName", "("])
         self.compile_parameter_list()
         self.eat([")"])
 
         # Compile subroutine body
-        self.output_file.write("<subroutineBody>\n")
         self.eat(["{"])
 
+        # Continue by compiling local variable declarations
         if self.tokeniser.current_token() == "var":
             while True:
                 self.compile_var_dec()
                 if self.tokeniser.current_token() != "var":
                     break
+
+        # WRITE TO VM FILE
+        n_locals = self.symbol_table.var_count("VAR") 
+        self.vm_writer.write_function(name, n_locals)
         
+        # Continue by compiling statements in subroutine
         statement_types = ["let", "if", "while", "do", "return"] 
         if self.tokeniser.current_token() in statement_types:
             while True:
@@ -401,9 +408,7 @@ class CompilationEngine:
                     break 
 
         self.eat(["}"])
-        self.output_file.write("</subroutineBody>\n")
-        self.output_file.write("</subroutineDec>\n")
-    
+
     def compile_parameter_list(self):
         """
         Compiles a (possibly empty) parameter list, not including the ().
@@ -452,14 +457,19 @@ class CompilationEngine:
         """
         Compiles subroutine call.
         """
-        if self.tokeniser.tokens[self.tokeniser.token_index + 1] == ".":
-            self.eat(["className|varName"])
-            self.eat(["."])
+        name = ""
 
-        self.eat(["subroutineName"])
-        self.eat(["("])
-        self.compile_expression_list()
+        if self.tokeniser.tokens[self.tokeniser.token_index + 1] == ".":
+            name += self.tokeniser.current_token() + '.'
+            self.eat(["className|varName", "."])
+
+        name += self.tokeniser.current_token()
+        self.eat(["subroutineName", "("])
+        n_args = self.compile_expression_list()
         self.eat([")"])
+
+        # WRITE TO VM FILE
+        self.vm_writer.write_call(name, n_args)        
 
     def compile_expression(self):
         """
@@ -482,18 +492,24 @@ class CompilationEngine:
 
     def compile_expression_list(self):
         """
-        Compiles a (possibly empty) comma-separated list of expressions.
+        Compiles a (possibly empty) comma-separated list of expressions. Returns
+        the number of expressions contained in the list.
         """
         self.output_file.write("<expressionList>\n")
 
+        # i counts the number of expressions in this expression list
+        i = 0
         if self.tokeniser.current_token() != ")":
+            i = 1
             while True:
                 self.compile_expression()
                 if self.tokeniser.current_token() == ")":
                     break
                 self.eat([","])
+                i += 1
 
         self.output_file.write("</expressionList>\n")
+        return i
     
     def compile_term(self):
         """
@@ -514,7 +530,7 @@ class CompilationEngine:
             elif self.tokeniser.tokens[self.tokeniser.token_index + 1] == ("." or "("):
                 self.compile_subroutine_call()
             # variable
-            else:                                   
+            else:                                  
                 self.eat(["varName"])
         
         else:
@@ -529,6 +545,8 @@ class CompilationEngine:
                 self.compile_term()
             # constant
             else:
+                value = self.tokeniser.current_token()
+                self.vm_writer.write_push("constant", value) 
                 self.eat(["STRING_CONST|INT_CONST|KEYWORD"])
         
         self.output_file.write("</term>\n")
@@ -595,8 +613,8 @@ class SymbolTable:
         in the current scope.
         """
         i = 0
-        for k, v in self.subroutine_scope:
-            if subroutine_scope[k][1] == kind:
+        for k, v in self.subroutine_scope.items():
+            if self.subroutine_scope[k][1] == kind:
                 i += 1
         return i
 
@@ -651,7 +669,7 @@ class VMWriter:
         """
         self.output_file.write(f"push {segment} {index}\n")
     
-    def write_push(self, segment, index):
+    def write_pop(self, segment, index):
         """
         Writes a VM pop command.
         """

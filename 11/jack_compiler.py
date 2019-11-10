@@ -7,7 +7,9 @@ does the job nicely.
 """
 
 import sys
-from utils import JackTokeniser, Initialiser, CompilationEngine, SymbolTable
+from utils import (
+    JackTokeniser, Initialiser, CompilationEngine, SymbolTable, VMWriter
+)
 
 def main():
     """
@@ -20,14 +22,18 @@ def main():
     # Generate dict of input files for translation and output files for writing
     file_names = {}
     for input_file in initialiser.files:
-        output_file = input_file.replace('jack', 'xml')
-        file_names[input_file] = output_file
+        xml_file = input_file.replace('jack', 'xml')
+        vm_file = input_file.replace('jack', 'vm')
+        file_names[input_file] = [xml_file, vm_file]
 
     # Tokenise input (a .jack class file) and write compilation to output
-    for input_file, output_file in file_names.items():
+    for input_file, output_files in file_names.items():
         tokeniser = JackTokeniser(input_file)              
         symbol_table = SymbolTable(tokeniser)              
-        engine = CompilationEngine(tokeniser, symbol_table, output_file) 
+        vm_writer = VMWriter(output_files[1]) 
+        engine = CompilationEngine(
+            tokeniser, symbol_table, output_files[0], vm_writer
+        )
         engine.compile_class()                            
         engine.close()  
 

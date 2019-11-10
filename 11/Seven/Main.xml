@@ -4,7 +4,6 @@
 	<name> Main </name>
 </identifier>
 <symbol> { </symbol>
-<subroutineDec>
 <keyword> function </keyword>
 <keyword> void </keyword>
 <identifier>
@@ -14,7 +13,6 @@
 <parameterList>
 </parameterList>
 <symbol> ) </symbol>
-<subroutineBody>
 <symbol> { </symbol>
 <statements>
 <doStatement>
@@ -57,7 +55,5 @@
 </returnStatement>
 </statements>
 <symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
 <symbol> } </symbol>
 </class>
