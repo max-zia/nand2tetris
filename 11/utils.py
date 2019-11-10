@@ -1,6 +1,7 @@
 import os       # os.listdir() returns everything in a directory
 import re       # re.split(pattern, string) splits string by pattern  
 import sys      # sys.exit() raised on syntax error
+import uuid     # module used to generate unique IDs for VM labels
 from helpers import collapse_string_constants
 
 class JackTokeniser:
@@ -210,6 +211,12 @@ class CompilationEngine:
         if name not in st.subroutine_scope and name not in st.class_scope:
             self.symbol_table.define(name, type, kind)
 
+    def get_id(self):
+        """
+        Generates a 3-character ID to ensure that all VM labels are unique. 
+        """
+        return uuid.uuid4().hex[:3]
+
     # Methods for compiling statements. 
     def compile_statements(self):
         """
@@ -224,19 +231,26 @@ class CompilationEngine:
             "return": self.compile_return
         }
 
-        self.output_file.write("<statements>\n")
         while True:
             dispatcher[self.tokeniser.current_token()]()
             if (self.tokeniser.current_token() not in dispatcher):
                 break
-        self.output_file.write("</statements>\n")
 
     def compile_let(self):
         """
         Compiles a let statement.
         """
-        self.output_file.write("<letStatement>\n")
-        self.eat(["let", "varName"])
+        # VM code equivalent of variable "kinds"
+        vars = {
+            "ARG": "argument",
+            "VAR": "local"
+        }
+        
+        self.eat(["let"]) 
+        
+        # Get varname
+        var_name = self.tokeniser.current_token()
+        self.eat(["varName"])
 
         if self.tokeniser.current_token() == "[":
             self.eat(["["])
@@ -247,29 +261,43 @@ class CompilationEngine:
         self.compile_expression()
         self.eat([";"]) 
 
-        self.output_file.write("</letStatement>\n")
+        # WRITE VARNAME TO VM FILE
+        # Local or argument variable
+        if var_name in self.symbol_table.subroutine_scope:
+            kind = vars[self.symbol_table.subroutine_scope[var_name][1]]
+            index = self.symbol_table.subroutine_scope[var_name][2]
+            self.vm_writer.write_pop(kind, index)
+        # Deal with static and field variables later
+
 
     def compile_if(self):
         """
         Compiles an if statement, possibly with a trailing else clause.
         """
-        self.output_file.write("<ifStatement>\n")
         self.eat(["if", "("])
         self.compile_expression()
         self.eat([")", "{"])
+
+        # Compile body of IF and write to VM file
+        id = self.get_id()
+        self.vm_writer.write_if("IF_TRUE_" + id)
+        self.vm_writer.write_goto("IF_FALSE_" + id)
+        self.vm_writer.write_label("IF_TRUE_" + id)
+
         self.compile_statements()
         self.eat(["}"])
         
-        # Check for trailing else clause
-        try:
-            if self.tokeniser.current_token() == "else":
-                self.eat(["else", "{"])
-                self.compile_statements()
-                self.eat(["}"])
-        except IndexError:
-            pass
+        # Check for trailing ELSE clause and compile if it exists
+        if self.tokeniser.current_token() == "else":
+            self.vm_writer.write_goto("IF_END_" + id)
+            self.vm_writer.write_label("IF_FALSE_" + id)
+            self.eat(["else", "{"])
+            self.compile_statements()
+            self.eat(["}"])
+            self.vm_writer.write_label("IF_END_" + id)
+        else:
+            self.vm_writer.write_label("IF_FALSE_" + id)
 
-        self.output_file.write("</ifStatement>\n")
 
     def compile_do(self):
         """
@@ -290,27 +318,46 @@ class CompilationEngine:
         """
         Compiles a while statement.
         """
-        self.output_file.write("<whileStatement>\n")
+        # Write WHILE_EXPRESSION label to VM file
+        id = self.get_id()
+        self.vm_writer.write_label("WHILE_EXP_" + id)
+
+        # Continue compilation
         self.eat(["while", "("])
         self.compile_expression()
+
+        # A boolean will have just been pushed to the stack due to the
+        # expression that was just compiled. Therefore, test whether the while
+        # loop code should be executed by negating this truth value, and
+        # then writing an if-goto command. If false (value = 0), go to 
+        # WHILE_END{id}, else continue. 
+        self.vm_writer.write_arithmetic("not")
+        self.vm_writer.write_if("WHILE_END_" + id)
+
+        # Continue compilation
         self.eat([")", "{"])
         self.compile_statements()
         self.eat(["}"])
-        self.output_file.write("</whileStatement>\n")
+
+        # Write WHILE_END goto and end label to VM file
+        self.vm_writer.write_goto("WHILE_EXP_" + id)
+        self.vm_writer.write_label("WHILE_END_" + id)
 
     def compile_return(self):
         """
         Compiles a return statement, which may contain one expression.
         """
-        self.output_file.write("<returnStatement>\n")
         self.eat(["return"])
         
         # Check whether the return statement returns an expression
         if self.tokeniser.current_token() != ";":
             self.compile_expression()
+            self.vm_writer.write_return()
+        else:
+            self.vm_writer.write_push("constant", 0)
+            self.vm_writer.write_return()
         
         self.eat([";"])
-        self.output_file.write("</returnStatement>\n")
 
     # Methods for compiling program structure.
     def compile_class(self):
@@ -382,7 +429,6 @@ class CompilationEngine:
 
         # Begin compiling subroutine declaration
         self.eat(["constructor|function|method"])
-        return_type = self.tokeniser.current_token()
         self.eat(["int|char|boolean|void"])
         
         # Get subroutine name and continue
@@ -412,11 +458,6 @@ class CompilationEngine:
                 self.compile_statements()
                 if self.tokeniser.current_token() not in statement_types:
                     break 
-
-        # WRITE RETURN STATEMENT TO VM FILE
-        if return_type == "void":
-            self.vm_writer.write_push("constant", 0)
-            self.vm_writer.write_return()
 
         self.eat(["}"])
 
@@ -540,12 +581,17 @@ class CompilationEngine:
         """
         Compiles a term.
         """
+        # VM code equivalent of unary operators
         unary_operators = {
             "-": "neg",
             "~": "not"
         }
 
-        self.output_file.write("<term>\n")  
+        # VM code equivalent of variable "kinds"
+        vars = {
+            "ARG": "argument",
+            "VAR": "local"
+        }
 
         # If current token is an identifier, test whether it is a variable,
         # an array entry, or a subroutine call by looking ahead one token.
@@ -560,9 +606,17 @@ class CompilationEngine:
             elif self.tokeniser.tokens[self.tokeniser.token_index + 1] == ("." or "("):
                 self.compile_subroutine_call()
             # variable
-            else:                                  
+            else:
+                var_name = self.tokeniser.current_token()
+                # WRITE VARIABLE EXPRESSION TO VM FILE
+                # Local or argument variables
+                if var_name in self.symbol_table.subroutine_scope:
+                    kind = vars[self.symbol_table.subroutine_scope[var_name][1]]
+                    index = self.symbol_table.subroutine_scope[var_name][2]
+                    self.vm_writer.write_push(kind, index)
+                # Deal with field and static variables later 
+
                 self.eat(["varName"])
-        
         else:
             # ( expression )
             if self.tokeniser.current_token() == "(":
@@ -578,12 +632,17 @@ class CompilationEngine:
                 self.vm_writer.write_arithmetic(unary_operators[command])
             # constant
             else:
-                # WRITE INT_CONST EXPRESSION TO VM FILE
                 value = self.tokeniser.current_token()
-                self.vm_writer.write_push("constant", value) 
+                # WRITE INT_CONST or BOOLEAN EXPRESSION TO VM FILE
+                if value == "false" or value == "null":
+                    self.vm_writer.write_push("constant", 0)
+                elif value == "true":
+                    self.vm_writer.write_push("constant", 1)
+                    self.vm_writer.write_arithmetic("neg")
+                else:
+                    self.vm_writer.write_push("constant", value) 
+
                 self.eat(["STRING_CONST|INT_CONST|KEYWORD"])
-        
-        self.output_file.write("</term>\n")
 
 
 class SymbolTable:
@@ -732,7 +791,24 @@ class VMWriter:
         Writes a VM return command.
         """
         self.output_file.write("return\n")
-
+    
+    def write_label(self, label):
+        """
+        Writes a VM label command.
+        """
+        self.output_file.write(f"label {label}\n")
+    
+    def write_if(self, label):
+        """
+        Write a VM if-goto command.
+        """
+        self.output_file.write(f"if-goto {label}\n")
+    
+    def write_goto(self, label):
+        """
+        Write a VM goto command.
+        """
+        self.output_file.write(f"goto {label}\n")
 
 class Initialiser:
     """

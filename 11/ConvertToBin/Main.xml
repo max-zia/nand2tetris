@@ -25,7 +25,6 @@
 </identifier>
 <symbol> ; </symbol>
 </varDec>
-<statements>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
@@ -37,25 +36,16 @@
 </identifier>
 <symbol> ( </symbol>
 <expressionList>
-<term>
 <integerConstant> 8001 </integerConstant>
-</term>
 <symbol> , </symbol>
-<term>
 <integerConstant> 16 </integerConstant>
-</term>
 <symbol> , </symbol>
-<term>
 <symbol> - </symbol>
-<term>
 <integerConstant> 1 </integerConstant>
-</term>
-</term>
 </expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-<letStatement>
 <keyword> let </keyword>
 <identifier>
 	<name> value </name>
@@ -64,7 +54,6 @@
 	<index> 0 </index>
 </identifier>
 <symbol> = </symbol>
-<term>
 <identifier>
 	<name> Memory </name>
 </identifier>
@@ -74,14 +63,10 @@
 </identifier>
 <symbol> ( </symbol>
 <expressionList>
-<term>
 <integerConstant> 8000 </integerConstant>
-</term>
 </expressionList>
 <symbol> ) </symbol>
-</term>
 <symbol> ; </symbol>
-</letStatement>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
@@ -93,23 +78,18 @@
 </identifier>
 <symbol> ( </symbol>
 <expressionList>
-<term>
 <identifier>
 	<name> value </name>
 	<type> int </type>
 	<kind> VAR </kind>
 	<index> 0 </index>
 </identifier>
-</term>
 </expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-<returnStatement>
 <keyword> return </keyword>
 <symbol> ; </symbol>
-</returnStatement>
-</statements>
 <symbol> } </symbol>
 <keyword> function </keyword>
 <keyword> void </keyword>
@@ -157,8 +137,6 @@
 </identifier>
 <symbol> ; </symbol>
 </varDec>
-<statements>
-<letStatement>
 <keyword> let </keyword>
 <identifier>
 	<name> loop </name>
@@ -167,26 +145,18 @@
 	<index> 2 </index>
 </identifier>
 <symbol> = </symbol>
-<term>
 <keyword> true </keyword>
-</term>
 <symbol> ; </symbol>
-</letStatement>
-<whileStatement>
 <keyword> while </keyword>
 <symbol> ( </symbol>
-<term>
 <identifier>
 	<name> loop </name>
 	<type> boolean </type>
 	<kind> VAR </kind>
 	<index> 2 </index>
 </identifier>
-</term>
 <symbol> ) </symbol>
 <symbol> { </symbol>
-<statements>
-<letStatement>
 <keyword> let </keyword>
 <identifier>
 	<name> position </name>
@@ -195,21 +165,15 @@
 	<index> 1 </index>
 </identifier>
 <symbol> = </symbol>
-<term>
 <identifier>
 	<name> position </name>
 	<type> int </type>
 	<kind> VAR </kind>
 	<index> 1 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <integerConstant> 1 </integerConstant>
-</term>
 <symbol> ; </symbol>
-</letStatement>
-<letStatement>
 <keyword> let </keyword>
 <identifier>
 	<name> mask </name>
@@ -218,7 +182,6 @@
 	<index> 0 </index>
 </identifier>
 <symbol> = </symbol>
-<term>
 <identifier>
 	<name> Main </name>
 </identifier>
@@ -228,82 +191,54 @@
 </identifier>
 <symbol> ( </symbol>
 <expressionList>
-<term>
 <identifier>
 	<name> mask </name>
 	<type> int </type>
 	<kind> VAR </kind>
 	<index> 0 </index>
 </identifier>
-</term>
 </expressionList>
 <symbol> ) </symbol>
-</term>
 <symbol> ; </symbol>
-</letStatement>
-<ifStatement>
 <keyword> if </keyword>
 <symbol> ( </symbol>
-<term>
 <symbol> ~ </symbol>
-<term>
 <symbol> ( </symbol>
-<term>
 <identifier>
 	<name> position </name>
 	<type> int </type>
 	<kind> VAR </kind>
 	<index> 1 </index>
 </identifier>
-</term>
 <symbol> &gt; </symbol>
-<term>
 <integerConstant> 16 </integerConstant>
-</term>
 <symbol> ) </symbol>
-</term>
-</term>
 <symbol> ) </symbol>
 <symbol> { </symbol>
-<statements>
-<ifStatement>
 <keyword> if </keyword>
 <symbol> ( </symbol>
-<term>
 <symbol> ~ </symbol>
-<term>
 <symbol> ( </symbol>
-<term>
 <symbol> ( </symbol>
-<term>
 <identifier>
 	<name> value </name>
 	<type> int </type>
 	<kind> ARG </kind>
 	<index> 0 </index>
 </identifier>
-</term>
 <symbol> &amp; </symbol>
-<term>
 <identifier>
 	<name> mask </name>
 	<type> int </type>
 	<kind> VAR </kind>
 	<index> 0 </index>
 </identifier>
-</term>
 <symbol> ) </symbol>
-</term>
 <symbol> = </symbol>
-<term>
 <integerConstant> 0 </integerConstant>
-</term>
 <symbol> ) </symbol>
-</term>
-</term>
 <symbol> ) </symbol>
 <symbol> { </symbol>
-<statements>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
@@ -315,31 +250,23 @@
 </identifier>
 <symbol> ( </symbol>
 <expressionList>
-<term>
 <integerConstant> 8000 </integerConstant>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> position </name>
 	<type> int </type>
 	<kind> VAR </kind>
 	<index> 1 </index>
 </identifier>
-</term>
 <symbol> , </symbol>
-<term>
 <integerConstant> 1 </integerConstant>
-</term>
 </expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-</statements>
 <symbol> } </symbol>
 <keyword> else </keyword>
 <symbol> { </symbol>
-<statements>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
@@ -351,35 +278,24 @@
 </identifier>
 <symbol> ( </symbol>
 <expressionList>
-<term>
 <integerConstant> 8000 </integerConstant>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> position </name>
 	<type> int </type>
 	<kind> VAR </kind>
 	<index> 1 </index>
 </identifier>
-</term>
 <symbol> , </symbol>
-<term>
 <integerConstant> 0 </integerConstant>
-</term>
 </expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-</statements>
 <symbol> } </symbol>
-</ifStatement>
-</statements>
 <symbol> } </symbol>
 <keyword> else </keyword>
 <symbol> { </symbol>
-<statements>
-<letStatement>
 <keyword> let </keyword>
 <identifier>
 	<name> loop </name>
@@ -388,22 +304,12 @@
 	<index> 2 </index>
 </identifier>
 <symbol> = </symbol>
-<term>
 <keyword> false </keyword>
-</term>
 <symbol> ; </symbol>
-</letStatement>
-</statements>
 <symbol> } </symbol>
-</ifStatement>
-</statements>
 <symbol> } </symbol>
-</whileStatement>
-<returnStatement>
 <keyword> return </keyword>
 <symbol> ; </symbol>
-</returnStatement>
-</statements>
 <symbol> } </symbol>
 <keyword> function </keyword>
 <keyword> int </keyword>
@@ -422,57 +328,35 @@
 </parameterList>
 <symbol> ) </symbol>
 <symbol> { </symbol>
-<statements>
-<ifStatement>
 <keyword> if </keyword>
 <symbol> ( </symbol>
-<term>
 <identifier>
 	<name> mask </name>
 	<type> int </type>
 	<kind> ARG </kind>
 	<index> 0 </index>
 </identifier>
-</term>
 <symbol> = </symbol>
-<term>
 <integerConstant> 0 </integerConstant>
-</term>
 <symbol> ) </symbol>
 <symbol> { </symbol>
-<statements>
-<returnStatement>
 <keyword> return </keyword>
-<term>
 <integerConstant> 1 </integerConstant>
-</term>
 <symbol> ; </symbol>
-</returnStatement>
-</statements>
 <symbol> } </symbol>
 <keyword> else </keyword>
 <symbol> { </symbol>
-<statements>
-<returnStatement>
 <keyword> return </keyword>
-<term>
 <identifier>
 	<name> mask </name>
 	<type> int </type>
 	<kind> ARG </kind>
 	<index> 0 </index>
 </identifier>
-</term>
 <symbol> * </symbol>
-<term>
 <integerConstant> 2 </integerConstant>
-</term>
 <symbol> ; </symbol>
-</returnStatement>
-</statements>
 <symbol> } </symbol>
-</ifStatement>
-</statements>
 <symbol> } </symbol>
 <keyword> function </keyword>
 <keyword> void </keyword>
@@ -507,25 +391,18 @@
 </parameterList>
 <symbol> ) </symbol>
 <symbol> { </symbol>
-<statements>
-<whileStatement>
 <keyword> while </keyword>
 <symbol> ( </symbol>
-<term>
 <identifier>
 	<name> length </name>
 	<type> int </type>
 	<kind> ARG </kind>
 	<index> 1 </index>
 </identifier>
-</term>
 <symbol> &gt; </symbol>
-<term>
 <integerConstant> 0 </integerConstant>
-</term>
 <symbol> ) </symbol>
 <symbol> { </symbol>
-<statements>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
@@ -537,28 +414,23 @@
 </identifier>
 <symbol> ( </symbol>
 <expressionList>
-<term>
 <identifier>
 	<name> startAddress </name>
 	<type> int </type>
 	<kind> ARG </kind>
 	<index> 0 </index>
 </identifier>
-</term>
 <symbol> , </symbol>
-<term>
 <identifier>
 	<name> value </name>
 	<type> int </type>
 	<kind> ARG </kind>
 	<index> 2 </index>
 </identifier>
-</term>
 </expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-<letStatement>
 <keyword> let </keyword>
 <identifier>
 	<name> length </name>
@@ -567,21 +439,15 @@
 	<index> 1 </index>
 </identifier>
 <symbol> = </symbol>
-<term>
 <identifier>
 	<name> length </name>
 	<type> int </type>
 	<kind> ARG </kind>
 	<index> 1 </index>
 </identifier>
-</term>
 <symbol> - </symbol>
-<term>
 <integerConstant> 1 </integerConstant>
-</term>
 <symbol> ; </symbol>
-</letStatement>
-<letStatement>
 <keyword> let </keyword>
 <identifier>
 	<name> startAddress </name>
@@ -590,28 +456,18 @@
 	<index> 0 </index>
 </identifier>
 <symbol> = </symbol>
-<term>
 <identifier>
 	<name> startAddress </name>
 	<type> int </type>
 	<kind> ARG </kind>
 	<index> 0 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <integerConstant> 1 </integerConstant>
-</term>
 <symbol> ; </symbol>
-</letStatement>
-</statements>
 <symbol> } </symbol>
-</whileStatement>
-<returnStatement>
 <keyword> return </keyword>
 <symbol> ; </symbol>
-</returnStatement>
-</statements>
 <symbol> } </symbol>
 <symbol> } </symbol>
 </class>
