@@ -35,6 +35,6 @@ def main():
             tokeniser, symbol_table, output_files[0], vm_writer
         )
         engine.compile_class()                            
-        engine.close()  
+        engine.close() 
 
 main()

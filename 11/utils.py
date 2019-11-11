@@ -217,6 +217,19 @@ class CompilationEngine:
         """
         return uuid.uuid4().hex[:3]
 
+    def get_methods(self):
+        """
+        Returns a list of methods that are in the current class.
+        """
+        methods = []
+        i = 0
+        while i < len(self.tokeniser.tokens):
+            if self.tokeniser.tokens[i] == "method":
+                methods.append(self.tokeniser.tokens[i + 2])
+            i += 1
+        
+        return methods
+
     # Methods for compiling statements. 
     def compile_statements(self):
         """
@@ -243,7 +256,8 @@ class CompilationEngine:
         # VM code equivalent of variable "kinds"
         vars = {
             "ARG": "argument",
-            "VAR": "local"
+            "VAR": "local",
+            "FIELD": "this"
         }
         
         self.eat(["let"]) 
@@ -267,8 +281,11 @@ class CompilationEngine:
             kind = vars[self.symbol_table.subroutine_scope[var_name][1]]
             index = self.symbol_table.subroutine_scope[var_name][2]
             self.vm_writer.write_pop(kind, index)
-        # Deal with static and field variables later
-
+        # Field variables (deal with static later)
+        elif var_name in self.symbol_table.class_scope:
+            kind = vars[self.symbol_table.class_scope[var_name][1]]
+            index = self.symbol_table.class_scope[var_name][2]
+            self.vm_writer.write_pop(kind, index)
 
     def compile_if(self):
         """
@@ -297,7 +314,6 @@ class CompilationEngine:
             self.vm_writer.write_label("IF_END_" + id)
         else:
             self.vm_writer.write_label("IF_FALSE_" + id)
-
 
     def compile_do(self):
         """
@@ -367,7 +383,6 @@ class CompilationEngine:
         class_vars = ["static", "field"]
         subroutines = ["constructor", "function", "method"] 
 
-        self.output_file.write("<class>\n")
         self.eat(["class", "className", "{"])
 
         # Compile any class variables
@@ -385,16 +400,13 @@ class CompilationEngine:
                     break
 
         self.eat(["}"])
-        self.output_file.write("</class>\n")
     
     def compile_class_var_dec(self):
         """
         Compiles a static or field declaration.
         """
-        self.output_file.write("<classVarDec>\n")
-
         # Update symbol table and eat tokens
-        kind = self.tokeniser.current_token()
+        kind = self.tokeniser.current_token().upper()
         self.eat(["static|field"])
 
         type = self.tokeniser.current_token()
@@ -403,7 +415,7 @@ class CompilationEngine:
         self.update_st(self.tokeniser.current_token(), type, kind)
         self.eat(["varName"])
 
-        # Check for multiple variable declarations of same type
+        # Check for multiple variable declarations of same type and kind
         if self.tokeniser.current_token() != ";":
             while True:
                 self.eat([","])
@@ -413,19 +425,43 @@ class CompilationEngine:
                     break
 
         self.eat(";")
-        self.output_file.write("</classVarDec>\n")
     
     def compile_subroutine(self):
         """
         Compiles a complete method, function, or constructor.
         """
+
+        def compile_constructor():
+            """
+            Compiles constructor-specific VM commands.
+            """
+            # Count field variables to determine how many words in host RAM are
+            # needed to represent an object instance of this class type.
+            n_field_vars = 0
+            for symbol, array in self.symbol_table.class_scope.items():
+                kind = array[1]
+                if kind == "FIELD":
+                    n_field_vars += 1
+            # Write VM commands
+            self.vm_writer.write_push("constant", n_field_vars)
+            self.vm_writer.write_call("Memory.alloc", 1)
+            self.vm_writer.write_pop("pointer", 0)
+        
+        def compile_method():
+            """
+            Compiles method-specific VM commands.
+            """
+            # The first argument for any method must be a reference to the object
+            # on which the method is supposed to operate. Also, whenever a method
+            # is defined, THIS (i.e., pointer 0) must be set to the base address
+            # held in argument 0.
+            self.symbol_table.define("this", self.tokeniser.tokens[1], "ARG")
+            self.vm_writer.write_push("argument", 0)
+            self.vm_writer.write_pop("pointer", 0)
+
         # Reset the subroutine_scope symbol table for each new subroutine
         self.symbol_table.start_subroutine()
-
-        # The first argument for any method must be a reference to the object
-        # on which the method is supposed to operate.
-        if self.tokeniser.current_token() == "method":
-            self.symbol_table.define("this", self.tokeniser.tokens[1], "ARG")
+        subroutine_type = self.tokeniser.current_token()
 
         # Begin compiling subroutine declaration
         self.eat(["constructor|function|method"])
@@ -450,6 +486,15 @@ class CompilationEngine:
         # WRITE FUNCTION NAME TO VM FILE
         n_locals = self.symbol_table.var_count("VAR") 
         self.vm_writer.write_function(name, n_locals)
+
+        # You could replace the following compile x with a DISPATCHER
+        # COMPILE METHOD
+        if subroutine_type == "method":
+            compile_method()
+
+        # COMPILE CONSTRUCTOR
+        elif subroutine_type == "constructor":
+            compile_constructor()
         
         # Continue by compiling statements in subroutine
         statement_types = ["let", "if", "while", "do", "return"] 
@@ -483,7 +528,6 @@ class CompilationEngine:
         """
         Compiles a variable declaration.
         """
-        self.output_file.write("<varDec>\n")  
         self.eat(["var"])
 
         # Update symbol table and eat tokens
@@ -502,26 +546,47 @@ class CompilationEngine:
                     break
 
         self.eat([";"])
-        self.output_file.write("</varDec>\n")
 
     # Methods for compiling expressions.
     def compile_subroutine_call(self):
         """
         Compiles subroutine call.
         """
-        name = ""
+        subroutine_name = ""
+        object_name = ""
 
+        # Check whether the subroutine is attached to a user-defined or OS type
         if self.tokeniser.tokens[self.tokeniser.token_index + 1] == ".":
-            name += self.tokeniser.current_token() + '.'
+            object_name = self.tokeniser.current_token()
             self.eat(["className|varName", "."])
 
-        name += self.tokeniser.current_token()
+        subroutine_name += self.tokeniser.current_token()
         self.eat(["subroutineName", "("])
         n_args = self.compile_expression_list()
         self.eat([")"])
 
         # WRITE TO VM FILE
-        self.vm_writer.write_call(name, n_args)        
+        st = self.symbol_table
+        if len(object_name) > 0:
+            if object_name in st.subroutine_scope:
+                n_args += 1
+                ref = st.subroutine_scope[object_name] 
+                self.vm_writer.write_push("local", ref[2])
+                subroutine_name = ref[0] + "." + subroutine_name
+            elif object_name in st.class_scope:
+                n_args += 1
+                ref = st.class_scope[object_name] 
+                self.vm_writer.write_push("this", ref[2])
+                subroutine_name = ref[0] + "." + subroutine_name
+            else: 
+                subroutine_name = object_name + "." + subroutine_name
+
+        elif subroutine_name in self.get_methods():
+            n_args += 1
+            subroutine_name = self.tokeniser.tokens[1] + "." + subroutine_name
+            self.vm_writer.write_push("pointer", 0)
+
+        self.vm_writer.write_call(subroutine_name, n_args)        
 
     def compile_expression(self):
         """
@@ -561,8 +626,6 @@ class CompilationEngine:
         Compiles a (possibly empty) comma-separated list of expressions. Returns
         the number of expressions contained in the list.
         """
-        self.output_file.write("<expressionList>\n")
-
         # i counts the number of expressions in this expression list
         i = 0
         if self.tokeniser.current_token() != ")":
@@ -574,7 +637,6 @@ class CompilationEngine:
                 self.eat([","])
                 i += 1
 
-        self.output_file.write("</expressionList>\n")
         return i
     
     def compile_term(self):
@@ -590,7 +652,8 @@ class CompilationEngine:
         # VM code equivalent of variable "kinds"
         vars = {
             "ARG": "argument",
-            "VAR": "local"
+            "VAR": "local",
+            "FIELD": "this",
         }
 
         # If current token is an identifier, test whether it is a variable,
@@ -614,7 +677,11 @@ class CompilationEngine:
                     kind = vars[self.symbol_table.subroutine_scope[var_name][1]]
                     index = self.symbol_table.subroutine_scope[var_name][2]
                     self.vm_writer.write_push(kind, index)
-                # Deal with field and static variables later 
+                # Field variables (deal with static later)
+                elif var_name in self.symbol_table.class_scope:
+                    kind = vars[self.symbol_table.class_scope[var_name][1]]
+                    index = self.symbol_table.class_scope[var_name][2]
+                    self.vm_writer.write_push(kind, index)
 
                 self.eat(["varName"])
         else:
@@ -633,12 +700,14 @@ class CompilationEngine:
             # constant
             else:
                 value = self.tokeniser.current_token()
-                # WRITE INT_CONST or BOOLEAN EXPRESSION TO VM FILE
+                # WRITE INT, BOOLEAN EXPRESSION, THIS EXPRESSION TO VM FILE
                 if value == "false" or value == "null":
                     self.vm_writer.write_push("constant", 0)
                 elif value == "true":
                     self.vm_writer.write_push("constant", 1)
                     self.vm_writer.write_arithmetic("neg")
+                elif value == "this":
+                    self.vm_writer.write_push("pointer", 0)
                 else:
                     self.vm_writer.write_push("constant", value) 
 
@@ -809,6 +878,7 @@ class VMWriter:
         Write a VM goto command.
         """
         self.output_file.write(f"goto {label}\n")
+
 
 class Initialiser:
     """

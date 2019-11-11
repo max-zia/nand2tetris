@@ -1,10 +1,8 @@
-<class>
 <keyword> class </keyword>
 <identifier>
 	<name> Main </name>
 </identifier>
 <symbol> { </symbol>
-<subroutineDec>
 <keyword> function </keyword>
 <keyword> void </keyword>
 <identifier>
@@ -14,9 +12,7 @@
 <parameterList>
 </parameterList>
 <symbol> ) </symbol>
-<subroutineBody>
 <symbol> { </symbol>
-<varDec>
 <keyword> var </keyword>
 <identifier>
 	<name> SquareGame </name>
@@ -28,9 +24,6 @@
 	<index> 0 </index>
 </identifier>
 <symbol> ; </symbol>
-</varDec>
-<statements>
-<letStatement>
 <keyword> let </keyword>
 <identifier>
 	<name> game </name>
@@ -39,8 +32,6 @@
 	<index> 0 </index>
 </identifier>
 <symbol> = </symbol>
-<expression>
-<term>
 <identifier>
 	<name> SquareGame </name>
 </identifier>
@@ -49,13 +40,8 @@
 	<name> new </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-</expressionList>
 <symbol> ) </symbol>
-</term>
-</expression>
 <symbol> ; </symbol>
-</letStatement>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
@@ -69,8 +55,6 @@
 	<name> run </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
@@ -87,18 +71,10 @@
 	<name> dispose </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-<returnStatement>
 <keyword> return </keyword>
 <symbol> ; </symbol>
-</returnStatement>
-</statements>
 <symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
 <symbol> } </symbol>
-</class>

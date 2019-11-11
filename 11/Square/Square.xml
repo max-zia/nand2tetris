@@ -1,30 +1,33 @@
-<class>
 <keyword> class </keyword>
 <identifier>
 	<name> Square </name>
 </identifier>
 <symbol> { </symbol>
-<classVarDec>
 <keyword> field </keyword>
 <keyword> int </keyword>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
 <symbol> , </symbol>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
 <symbol> ; </symbol>
-</classVarDec>
-<classVarDec>
 <keyword> field </keyword>
 <keyword> int </keyword>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
 <symbol> ; </symbol>
-</classVarDec>
-<subroutineDec>
 <keyword> constructor </keyword>
 <identifier>
 	<name> Square </name>
@@ -59,88 +62,65 @@
 </identifier>
 </parameterList>
 <symbol> ) </symbol>
-<subroutineBody>
 <symbol> { </symbol>
-<statements>
-<letStatement>
 <keyword> let </keyword>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
 <symbol> = </symbol>
-<expression>
-<term>
 <identifier>
 	<name> Ax </name>
 	<type> int </type>
 	<kind> ARG </kind>
 	<index> 0 </index>
 </identifier>
-</term>
-</expression>
 <symbol> ; </symbol>
-</letStatement>
-<letStatement>
 <keyword> let </keyword>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
 <symbol> = </symbol>
-<expression>
-<term>
 <identifier>
 	<name> Ay </name>
 	<type> int </type>
 	<kind> ARG </kind>
 	<index> 1 </index>
 </identifier>
-</term>
-</expression>
 <symbol> ; </symbol>
-</letStatement>
-<letStatement>
 <keyword> let </keyword>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
 <symbol> = </symbol>
-<expression>
-<term>
 <identifier>
 	<name> Asize </name>
 	<type> int </type>
 	<kind> ARG </kind>
 	<index> 2 </index>
 </identifier>
-</term>
-</expression>
 <symbol> ; </symbol>
-</letStatement>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
 	<name> draw </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-<returnStatement>
 <keyword> return </keyword>
-<expression>
-<term>
 <keyword> this </keyword>
-</term>
-</expression>
 <symbol> ; </symbol>
-</returnStatement>
-</statements>
 <symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
 <identifier>
@@ -150,9 +130,7 @@
 <parameterList>
 </parameterList>
 <symbol> ) </symbol>
-<subroutineBody>
 <symbol> { </symbol>
-<statements>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
@@ -163,25 +141,13 @@
 	<name> deAlloc </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <keyword> this </keyword>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-<returnStatement>
 <keyword> return </keyword>
 <symbol> ; </symbol>
-</returnStatement>
-</statements>
 <symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
 <identifier>
@@ -191,9 +157,7 @@
 <parameterList>
 </parameterList>
 <symbol> ) </symbol>
-<subroutineBody>
 <symbol> { </symbol>
-<statements>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
@@ -204,13 +168,7 @@
 	<name> setColor </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <keyword> true </keyword>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
@@ -224,63 +182,53 @@
 	<name> drawRectangle </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-<returnStatement>
 <keyword> return </keyword>
 <symbol> ; </symbol>
-</returnStatement>
-</statements>
 <symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
 <identifier>
@@ -290,9 +238,7 @@
 <parameterList>
 </parameterList>
 <symbol> ) </symbol>
-<subroutineBody>
 <symbol> { </symbol>
-<statements>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
@@ -303,13 +249,7 @@
 	<name> setColor </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <keyword> false </keyword>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
@@ -323,63 +263,53 @@
 	<name> drawRectangle </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-<returnStatement>
 <keyword> return </keyword>
 <symbol> ; </symbol>
-</returnStatement>
-</statements>
 <symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
 <identifier>
@@ -389,125 +319,89 @@
 <parameterList>
 </parameterList>
 <symbol> ) </symbol>
-<subroutineBody>
 <symbol> { </symbol>
-<statements>
-<ifStatement>
 <keyword> if </keyword>
 <symbol> ( </symbol>
-<expression>
-<term>
 <symbol> ( </symbol>
-<expression>
-<term>
 <symbol> ( </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
 <symbol> ) </symbol>
-</term>
 <symbol> &lt; </symbol>
-<term>
 <integerConstant> 254 </integerConstant>
-</term>
-</expression>
 <symbol> ) </symbol>
-</term>
 <symbol> &amp; </symbol>
-<term>
 <symbol> ( </symbol>
-<expression>
-<term>
 <symbol> ( </symbol>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
 <symbol> ) </symbol>
-</term>
 <symbol> &lt; </symbol>
-<term>
 <integerConstant> 510 </integerConstant>
-</term>
-</expression>
 <symbol> ) </symbol>
-</term>
-</expression>
 <symbol> ) </symbol>
 <symbol> { </symbol>
-<statements>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
 	<name> erase </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-<letStatement>
 <keyword> let </keyword>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
 <symbol> = </symbol>
-<expression>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <integerConstant> 2 </integerConstant>
-</term>
-</expression>
 <symbol> ; </symbol>
-</letStatement>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
 	<name> draw </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-</statements>
 <symbol> } </symbol>
-</ifStatement>
-<returnStatement>
 <keyword> return </keyword>
 <symbol> ; </symbol>
-</returnStatement>
-</statements>
 <symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
 <identifier>
@@ -517,79 +411,58 @@
 <parameterList>
 </parameterList>
 <symbol> ) </symbol>
-<subroutineBody>
 <symbol> { </symbol>
-<statements>
-<ifStatement>
 <keyword> if </keyword>
 <symbol> ( </symbol>
-<expression>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
 <symbol> &gt; </symbol>
-<term>
 <integerConstant> 2 </integerConstant>
-</term>
-</expression>
 <symbol> ) </symbol>
 <symbol> { </symbol>
-<statements>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
 	<name> erase </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-<letStatement>
 <keyword> let </keyword>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
 <symbol> = </symbol>
-<expression>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
 <symbol> - </symbol>
-<term>
 <integerConstant> 2 </integerConstant>
-</term>
-</expression>
 <symbol> ; </symbol>
-</letStatement>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
 	<name> draw </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-</statements>
 <symbol> } </symbol>
-</ifStatement>
-<returnStatement>
 <keyword> return </keyword>
 <symbol> ; </symbol>
-</returnStatement>
-</statements>
 <symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
 <identifier>
@@ -599,26 +472,19 @@
 <parameterList>
 </parameterList>
 <symbol> ) </symbol>
-<subroutineBody>
 <symbol> { </symbol>
-<statements>
-<ifStatement>
 <keyword> if </keyword>
 <symbol> ( </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
 <symbol> &gt; </symbol>
-<term>
 <integerConstant> 1 </integerConstant>
-</term>
-</expression>
 <symbol> ) </symbol>
 <symbol> { </symbol>
-<statements>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
@@ -629,13 +495,7 @@
 	<name> setColor </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <keyword> false </keyword>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
@@ -649,89 +509,78 @@
 	<name> drawRectangle </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <symbol> ( </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
 <symbol> ) </symbol>
-</term>
 <symbol> - </symbol>
-<term>
 <integerConstant> 1 </integerConstant>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-<letStatement>
 <keyword> let </keyword>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
 <symbol> = </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
 <symbol> - </symbol>
-<term>
 <integerConstant> 2 </integerConstant>
-</term>
-</expression>
 <symbol> ; </symbol>
-</letStatement>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
@@ -742,13 +591,7 @@
 	<name> setColor </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <keyword> true </keyword>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
@@ -762,64 +605,49 @@
 	<name> drawRectangle </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <integerConstant> 1 </integerConstant>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-</statements>
 <symbol> } </symbol>
-</ifStatement>
-<returnStatement>
 <keyword> return </keyword>
 <symbol> ; </symbol>
-</returnStatement>
-</statements>
 <symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
 <identifier>
@@ -829,38 +657,28 @@
 <parameterList>
 </parameterList>
 <symbol> ) </symbol>
-<subroutineBody>
 <symbol> { </symbol>
-<statements>
-<ifStatement>
 <keyword> if </keyword>
 <symbol> ( </symbol>
-<expression>
-<term>
 <symbol> ( </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
 <symbol> ) </symbol>
-</term>
 <symbol> &lt; </symbol>
-<term>
 <integerConstant> 254 </integerConstant>
-</term>
-</expression>
 <symbol> ) </symbol>
 <symbol> { </symbol>
-<statements>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
@@ -871,13 +689,7 @@
 	<name> setColor </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <keyword> false </keyword>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
@@ -891,71 +703,62 @@
 	<name> drawRectangle </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <integerConstant> 1 </integerConstant>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-<letStatement>
 <keyword> let </keyword>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
 <symbol> = </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <integerConstant> 2 </integerConstant>
-</term>
-</expression>
 <symbol> ; </symbol>
-</letStatement>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
@@ -966,13 +769,7 @@
 	<name> setColor </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <keyword> true </keyword>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
@@ -986,82 +783,65 @@
 	<name> drawRectangle </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <symbol> ( </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
 <symbol> ) </symbol>
-</term>
 <symbol> - </symbol>
-<term>
 <integerConstant> 1 </integerConstant>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-</statements>
 <symbol> } </symbol>
-</ifStatement>
-<returnStatement>
 <keyword> return </keyword>
 <symbol> ; </symbol>
-</returnStatement>
-</statements>
 <symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
 <identifier>
@@ -1071,26 +851,19 @@
 <parameterList>
 </parameterList>
 <symbol> ) </symbol>
-<subroutineBody>
 <symbol> { </symbol>
-<statements>
-<ifStatement>
 <keyword> if </keyword>
 <symbol> ( </symbol>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
 <symbol> &gt; </symbol>
-<term>
 <integerConstant> 1 </integerConstant>
-</term>
-</expression>
 <symbol> ) </symbol>
 <symbol> { </symbol>
-<statements>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
@@ -1101,13 +874,7 @@
 	<name> setColor </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <keyword> false </keyword>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
@@ -1121,89 +888,78 @@
 	<name> drawRectangle </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <symbol> ( </symbol>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
 <symbol> ) </symbol>
-</term>
 <symbol> - </symbol>
-<term>
 <integerConstant> 1 </integerConstant>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-<letStatement>
 <keyword> let </keyword>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
 <symbol> = </symbol>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
 <symbol> - </symbol>
-<term>
 <integerConstant> 2 </integerConstant>
-</term>
-</expression>
 <symbol> ; </symbol>
-</letStatement>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
@@ -1214,13 +970,7 @@
 	<name> setColor </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <keyword> true </keyword>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
@@ -1234,64 +984,49 @@
 	<name> drawRectangle </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <integerConstant> 1 </integerConstant>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-</statements>
 <symbol> } </symbol>
-</ifStatement>
-<returnStatement>
 <keyword> return </keyword>
 <symbol> ; </symbol>
-</returnStatement>
-</statements>
 <symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
 <keyword> method </keyword>
 <keyword> void </keyword>
 <identifier>
@@ -1301,38 +1036,28 @@
 <parameterList>
 </parameterList>
 <symbol> ) </symbol>
-<subroutineBody>
 <symbol> { </symbol>
-<statements>
-<ifStatement>
 <keyword> if </keyword>
 <symbol> ( </symbol>
-<expression>
-<term>
 <symbol> ( </symbol>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
 <symbol> ) </symbol>
-</term>
 <symbol> &lt; </symbol>
-<term>
 <integerConstant> 510 </integerConstant>
-</term>
-</expression>
 <symbol> ) </symbol>
 <symbol> { </symbol>
-<statements>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
@@ -1343,13 +1068,7 @@
 	<name> setColor </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <keyword> false </keyword>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
@@ -1363,71 +1082,62 @@
 	<name> drawRectangle </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <integerConstant> 1 </integerConstant>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-<letStatement>
 <keyword> let </keyword>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
 <symbol> = </symbol>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <integerConstant> 2 </integerConstant>
-</term>
-</expression>
 <symbol> ; </symbol>
-</letStatement>
 <doStatement>
 <keyword> do </keyword>
 <identifier>
@@ -1438,13 +1148,7 @@
 	<name> setColor </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <keyword> true </keyword>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
@@ -1458,80 +1162,63 @@
 	<name> drawRectangle </name>
 </identifier>
 <symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
 <symbol> ( </symbol>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
 <symbol> ) </symbol>
-</term>
 <symbol> - </symbol>
-<term>
 <integerConstant> 1 </integerConstant>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> x </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 0 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
 <symbol> , </symbol>
-<expression>
-<term>
 <identifier>
 	<name> y </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 1 </index>
 </identifier>
-</term>
 <symbol> + </symbol>
-<term>
 <identifier>
 	<name> size </name>
+	<type> int </type>
+	<kind> FIELD </kind>
+	<index> 2 </index>
 </identifier>
-</term>
-</expression>
-</expressionList>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 </doStatement>
-</statements>
 <symbol> } </symbol>
-</ifStatement>
-<returnStatement>
 <keyword> return </keyword>
 <symbol> ; </symbol>
-</returnStatement>
-</statements>
 <symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
 <symbol> } </symbol>
-</class>
