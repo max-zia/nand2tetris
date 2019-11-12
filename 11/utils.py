@@ -4,6 +4,7 @@ import sys      # sys.exit() raised on syntax error
 import uuid     # module used to generate unique IDs for VM labels
 from helpers import collapse_string_constants
 
+
 class JackTokeniser:
     """
     Removes all comments and whitespace from the input stream and breaks it
@@ -118,93 +119,26 @@ class CompilationEngine:
     parsed structure into an output file.
     """
 
-    def __init__(self, tokeniser, symbol_table, output_file, vm_writer):
+    def __init__(self, tokeniser, symbol_table, vm_writer):
         """
         Initialises all instances with a tokeniser and an open output file.
         """
         self.tokeniser = tokeniser
         self.vm_writer = vm_writer
         self.symbol_table = symbol_table
-        self.output_file = open(output_file, 'w')
-    
-    # Helpers for the compilation process
-    def close(self):
-        """
-        Closes the output file.
-        """
-        self.output_file.close()
-    
-    def write_current_token(self):
-        """
-        Writes the current token to the output_file.
-        """
-        type = self.tokeniser.token_type()
-        replace_text = ''
-
-        # Get the XML tagname and text
-        if type == 'SYMBOL':
-            if self.tokeniser.symbol() == '&':
-                replace_text = '&amp;'
-            if self.tokeniser.symbol() == '<':
-                replace_text = '&lt;'
-            if self.tokeniser.symbol() == '>':
-                replace_text = '&gt;'
-            
-            text = self.tokeniser.symbol()
-            tag = type.lower()
-
-        elif type == 'IDENTIFIER':
-            text = self.tokeniser.identifier()
-            tag = type.lower()
-
-        elif type == 'KEYWORD':
-            text = self.tokeniser.keyword()
-            tag = type.lower()
-
-        elif type == 'STRING_CONST':
-            text = self.tokeniser.string_val()
-            tag = 'stringConstant'
-
-        elif type == 'INT_CONST':
-            text = self.tokeniser.int_val()
-            tag = 'integerConstant'
-
-        # Write to file
-        if type == "IDENTIFIER":
-            st = self.symbol_table
-
-            if text in st.subroutine_scope or text in st.class_scope:
-                self.output_file.write(f'<{tag}>\n')
-                self.output_file.write(f'\t<name> {text} </name>\n')
-                self.output_file.write(f'\t<type> {st.type_of(text)} </type>\n')
-                self.output_file.write(f'\t<kind> {st.kind_of(text)} </kind>\n')
-                self.output_file.write(f'\t<index> {st.index_of(text)} </index>\n')
-                self.output_file.write(f'</{tag}>\n')
-            
-            else:
-                self.output_file.write(f'<{tag}>\n')
-                self.output_file.write(f'\t<name> {text} </name>\n')
-                self.output_file.write(f'</{tag}>\n')
-
-        elif len(replace_text) == 0:
-            self.output_file.write(f'<{tag}> {text} </{tag}>\n')
-
-        else:
-            self.output_file.write(f'<{tag}> {replace_text} </{tag}>\n')
-    
+        
     def eat(self, tokens):
         """
-        Consumes the current token, advances over it, and writes the token to 
-        the output file. Raises a syntax error if the token is incorrect. Note
-        that syntax error checking could certainly be improved here.
+        Consumes the current token and advances over it. Raises a syntax error 
+        if the token is incorrect.
         """
         for token in tokens:
-            if self.tokeniser.current_token() in token.split("|") or (
-                ("varName" or "subroutineName" or "className" in token.split("|")) 
-                and (self.tokeniser.token_type() == "IDENTIFIER")) or (
-                ("INT_CONST" or "STRING_CONST" or "KEYWORD" in token.split("|"))
+            if (
+                self.tokeniser.current_token() in token.split("|") 
+                or ("varName" or "subroutineName" or "className" in token.split("|")
+                and (self.tokeniser.token_type() == "IDENTIFIER")) 
+                or "INT_CONST" or "STRING_CONST" or "KEYWORD" in token.split("|")
             ):
-                self.write_current_token()
                 self.tokeniser.advance()
             else:
                 sys.exit(f"SyntaxError: expected {token} not {self.tokeniser.current_token()}")
@@ -764,6 +698,7 @@ class CompilationEngine:
                 # Boolean expressions
                 elif value == "false" or value == "null":
                     self.vm_writer.write_push("constant", 0)
+                    
                 elif value == "true":
                     self.vm_writer.write_push("constant", 1)
                     self.vm_writer.write_arithmetic("neg")
@@ -950,6 +885,7 @@ class VMWriter:
         for char in string:
             self.write_push("constant", ord(char))
             self.write_call("String.appendChar", 2)
+
 
 class Initialiser:
     """
