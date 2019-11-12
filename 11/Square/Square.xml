@@ -36,7 +36,6 @@
 	<name> new </name>
 </identifier>
 <symbol> ( </symbol>
-<parameterList>
 <keyword> int </keyword>
 <identifier>
 	<name> Ax </name>
@@ -60,7 +59,6 @@
 	<kind> ARG </kind>
 	<index> 2 </index>
 </identifier>
-</parameterList>
 <symbol> ) </symbol>
 <symbol> { </symbol>
 <keyword> let </keyword>
@@ -127,8 +125,6 @@
 	<name> dispose </name>
 </identifier>
 <symbol> ( </symbol>
-<parameterList>
-</parameterList>
 <symbol> ) </symbol>
 <symbol> { </symbol>
 <doStatement>
@@ -154,8 +150,6 @@
 	<name> draw </name>
 </identifier>
 <symbol> ( </symbol>
-<parameterList>
-</parameterList>
 <symbol> ) </symbol>
 <symbol> { </symbol>
 <doStatement>
@@ -235,8 +229,6 @@
 	<name> erase </name>
 </identifier>
 <symbol> ( </symbol>
-<parameterList>
-</parameterList>
 <symbol> ) </symbol>
 <symbol> { </symbol>
 <doStatement>
@@ -316,8 +308,6 @@
 	<name> incSize </name>
 </identifier>
 <symbol> ( </symbol>
-<parameterList>
-</parameterList>
 <symbol> ) </symbol>
 <symbol> { </symbol>
 <keyword> if </keyword>
@@ -408,8 +398,6 @@
 	<name> decSize </name>
 </identifier>
 <symbol> ( </symbol>
-<parameterList>
-</parameterList>
 <symbol> ) </symbol>
 <symbol> { </symbol>
 <keyword> if </keyword>
@@ -469,8 +457,6 @@
 	<name> moveUp </name>
 </identifier>
 <symbol> ( </symbol>
-<parameterList>
-</parameterList>
 <symbol> ) </symbol>
 <symbol> { </symbol>
 <keyword> if </keyword>
@@ -654,8 +640,6 @@
 	<name> moveDown </name>
 </identifier>
 <symbol> ( </symbol>
-<parameterList>
-</parameterList>
 <symbol> ) </symbol>
 <symbol> { </symbol>
 <keyword> if </keyword>
@@ -848,8 +832,6 @@
 	<name> moveLeft </name>
 </identifier>
 <symbol> ( </symbol>
-<parameterList>
-</parameterList>
 <symbol> ) </symbol>
 <symbol> { </symbol>
 <keyword> if </keyword>
@@ -1033,8 +1015,6 @@
 	<name> moveRight </name>
 </identifier>
 <symbol> ( </symbol>
-<parameterList>
-</parameterList>
 <symbol> ) </symbol>
 <symbol> { </symbol>
 <keyword> if </keyword>

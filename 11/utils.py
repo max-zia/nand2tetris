@@ -272,7 +272,8 @@ class CompilationEngine:
         vars = {
             "ARG": "argument",
             "VAR": "local",
-            "FIELD": "this"
+            "FIELD": "this",
+            "STATIC": "static"
         }
         
         # Begin compiling
@@ -305,6 +306,7 @@ class CompilationEngine:
         self.eat([";"]) 
 
         if arr_flag:
+            # VM commands for writing a value into an arr[i]
             self.vm_writer.write_pop("temp", 0)
             self.vm_writer.write_pop("pointer", 1)
             self.vm_writer.write_push("temp", 0)
@@ -346,11 +348,9 @@ class CompilationEngine:
         """
         Compiles a do statement and the subroutine call.
         """
-        self.output_file.write("<doStatement>\n")
         self.eat(["do"])
         self.compile_subroutine_call()
         self.eat([";"])
-        self.output_file.write("</doStatement>\n")
 
         # When compiling a do "sub" statement, where "sub" is a void method
         # or function, the caller of the corresponding VM function must pop
@@ -474,15 +474,20 @@ class CompilationEngine:
             self.vm_writer.write_call("Memory.alloc", 1)
             self.vm_writer.write_pop("pointer", 0)
         
-        def compile_method():
+        def update_method_st():
             """
-            Compiles method-specific VM commands.
+            Updates method symbol table.
             """
             # The first argument for any method must be a reference to the object
             # on which the method is supposed to operate. Also, whenever a method
             # is defined, THIS (i.e., pointer 0) must be set to the base address
             # held in argument 0.
             self.symbol_table.define("this", self.tokeniser.tokens[1], "ARG")
+        
+        def compile_method():
+            """
+            Compiles method-specific VM commands.
+            """
             self.vm_writer.write_push("argument", 0)
             self.vm_writer.write_pop("pointer", 0)
 
@@ -497,6 +502,8 @@ class CompilationEngine:
         # Get subroutine name and continue
         name = self.tokeniser.tokens[1] + '.' + self.tokeniser.current_token()
         self.eat(["varName", "("])
+        if subroutine_type == "method":
+            update_method_st()
         self.compile_parameter_list()
         self.eat([")"])
 
@@ -537,8 +544,6 @@ class CompilationEngine:
         """
         Compiles a (possibly empty) parameter list, not including the ().
         """
-        self.output_file.write("<parameterList>\n")
-        
         if self.tokeniser.current_token() != ")":
             while True:
                 type = self.tokeniser.current_token()
@@ -548,8 +553,6 @@ class CompilationEngine:
                 if self.tokeniser.current_token() == ")":
                     break
                 self.eat([","])
-
-        self.output_file.write("</parameterList>\n")
     
     def compile_var_dec(self):
         """
@@ -589,10 +592,9 @@ class CompilationEngine:
 
         subroutine_name += self.tokeniser.current_token()
         self.eat(["subroutineName", "("])
-        n_args = self.compile_expression_list()
-        self.eat([")"])
 
         # WRITE TO VM FILE
+        n_args = 0
         st = self.symbol_table
         if len(object_name) > 0:
             if object_name in st.subroutine_scope:
@@ -612,6 +614,10 @@ class CompilationEngine:
             n_args += 1
             subroutine_name = self.tokeniser.tokens[1] + "." + subroutine_name
             self.vm_writer.write_push("pointer", 0)
+
+        n_args += self.compile_expression_list()
+        self.eat([")"])
+
 
         self.vm_writer.write_call(subroutine_name, n_args)        
 
@@ -681,12 +687,12 @@ class CompilationEngine:
             "ARG": "argument",
             "VAR": "local",
             "FIELD": "this",
+            "STATIC": "static"
         }
 
         # If current token is an identifier, test whether it is a variable,
         # an array entry, or a subroutine call by looking ahead one token.
         if self.tokeniser.token_type() == "IDENTIFIER":
-
 
             # Subroutine call
             if self.tokeniser.tokens[self.tokeniser.token_index + 1] == ("." or "("):

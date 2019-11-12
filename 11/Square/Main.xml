@@ -9,8 +9,6 @@
 	<name> main </name>
 </identifier>
 <symbol> ( </symbol>
-<parameterList>
-</parameterList>
 <symbol> ) </symbol>
 <symbol> { </symbol>
 <keyword> var </keyword>

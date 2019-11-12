@@ -31,8 +31,6 @@
 	<name> new </name>
 </identifier>
 <symbol> ( </symbol>
-<parameterList>
-</parameterList>
 <symbol> ) </symbol>
 <symbol> { </symbol>
 <keyword> let </keyword>
@@ -78,8 +76,6 @@
 	<name> dispose </name>
 </identifier>
 <symbol> ( </symbol>
-<parameterList>
-</parameterList>
 <symbol> ) </symbol>
 <symbol> { </symbol>
 <doStatement>
@@ -121,8 +117,6 @@
 	<name> moveSquare </name>
 </identifier>
 <symbol> ( </symbol>
-<parameterList>
-</parameterList>
 <symbol> ) </symbol>
 <symbol> { </symbol>
 <keyword> if </keyword>
@@ -264,8 +258,6 @@
 	<name> run </name>
 </identifier>
 <symbol> ( </symbol>
-<parameterList>
-</parameterList>
 <symbol> ) </symbol>
 <symbol> { </symbol>
 <keyword> var </keyword>
