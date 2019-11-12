@@ -25,13 +25,13 @@ class Main {
         let c[0] = null;
         let c = c[0];
         
-        do Output.printString("Test 1: expected result: 5; actual result: ");
+        do Output.printString("Test 1: expected result: 5; actual result:");
         do Output.printInt(b[2]);
         do Output.println();
-        do Output.printString("Test 2: expected result: 40; actual result: ");
+        do Output.printString("Test 2: expected result: 40; actual result:");
         do Output.printInt(a[5]);
         do Output.println();
-        do Output.printString("Test 3: expected result: 0; actual result: ");
+        do Output.printString("Test 3: expected result: 0; actual result:");
         do Output.printInt(c);
         do Output.println();
         
@@ -47,10 +47,10 @@ class Main {
             let b[1] = b[1] + c[1];  // b[1] = 33 + 77 = 110;
         }
 
-        do Output.printString("Test 4: expected result: 77; actual result: ");
+        do Output.printString("Test 4: expected result: 77; actual result:");
         do Output.printInt(c[1]);
         do Output.println();
-        do Output.printString("Test 5: expected result: 110; actual result: ");
+        do Output.printString("Test 5: expected result: 110; actual result:");
         do Output.printInt(b[1]);
         do Output.println();
         return;

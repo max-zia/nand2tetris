@@ -12,6 +12,13 @@ class JackTokeniser:
 
     def __init__(self, input_file):
         """
+        Constructs class with an array of tokens and a token pointer.
+        """
+        self.tokens = self.get_tokens(input_file)
+        self.token_index = 0 
+    
+    def get_tokens(self, input_file):
+        """
         Appends every lexical atom (i.e., token) of the input file 
         to a list, and makes this available as an attribute (.tokens). 
         Removes comments, whitespace, and newline characters in the process.
@@ -37,9 +44,8 @@ class JackTokeniser:
         if '"' in tokens:
             collapse_string_constants(tokens)
 
-        self.tokens = tokens        # array for all tokens (as field var)
-        self.token_index = 0        # pointer for current token (as field var)
-    
+        return tokens
+
     def current_token(self):
         """
         Returns the token that the token_index pointer is pointing to.
@@ -253,6 +259,15 @@ class CompilationEngine:
         """
         Compiles a let statement.
         """
+        # Array flag to signal whether a let arr[i] = x is being handled
+        arr_flag = False
+
+        # Dispatcher for checking variable scope 
+        dispatcher = {
+            0: self.symbol_table.subroutine_scope,
+            1: self.symbol_table.class_scope
+        }
+
         # VM code equivalent of variable "kinds"
         vars = {
             "ARG": "argument",
@@ -260,31 +275,43 @@ class CompilationEngine:
             "FIELD": "this"
         }
         
+        # Begin compiling
         self.eat(["let"]) 
         
-        # Get varname
+        # Get varname, kind, and index by checking variable scope
         var_name = self.tokeniser.current_token()
+
+        if var_name in self.symbol_table.subroutine_scope:
+            key = 0
+        elif var_name in self.symbol_table.class_scope:
+            key = 1
+
+        kind = vars[dispatcher[key][var_name][1]]
+        index = dispatcher[key][var_name][2]
+
         self.eat(["varName"])
 
+        # If necessary, handle array manipulation
         if self.tokeniser.current_token() == "[":
+            arr_flag = True
             self.eat(["["])
             self.compile_expression()
             self.eat(["]"])
+            self.vm_writer.write_push(kind, index)
+            self.vm_writer.write_arithmetic("add")
 
         self.eat(["="])
         self.compile_expression()
         self.eat([";"]) 
 
-        # WRITE VARNAME TO VM FILE
-        # Local or argument variable
-        if var_name in self.symbol_table.subroutine_scope:
-            kind = vars[self.symbol_table.subroutine_scope[var_name][1]]
-            index = self.symbol_table.subroutine_scope[var_name][2]
-            self.vm_writer.write_pop(kind, index)
-        # Field variables (deal with static later)
-        elif var_name in self.symbol_table.class_scope:
-            kind = vars[self.symbol_table.class_scope[var_name][1]]
-            index = self.symbol_table.class_scope[var_name][2]
+        if arr_flag:
+            self.vm_writer.write_pop("temp", 0)
+            self.vm_writer.write_pop("pointer", 1)
+            self.vm_writer.write_push("temp", 0)
+            self.vm_writer.write_pop("that", 0)
+        else:
+            # Pop the evaluated expression (which has just been placed
+            # at the top of the stack) to var_name.        
             self.vm_writer.write_pop(kind, index)
 
     def compile_if(self):
@@ -659,57 +686,83 @@ class CompilationEngine:
         # If current token is an identifier, test whether it is a variable,
         # an array entry, or a subroutine call by looking ahead one token.
         if self.tokeniser.token_type() == "IDENTIFIER":
-            # array entry
-            if self.tokeniser.tokens[self.tokeniser.token_index + 1] == "[":
-                self.eat(["varName"])
-                self.eat(["["])
-                self.compile_expression()
-                self.eat(["]"])
-            # subroutine call
-            elif self.tokeniser.tokens[self.tokeniser.token_index + 1] == ("." or "("):
+
+
+            # Subroutine call
+            if self.tokeniser.tokens[self.tokeniser.token_index + 1] == ("." or "("):
                 self.compile_subroutine_call()
-            # variable
+
+            # Variable or array manipulation
             else:
                 var_name = self.tokeniser.current_token()
-                # WRITE VARIABLE EXPRESSION TO VM FILE
-                # Local or argument variables
-                if var_name in self.symbol_table.subroutine_scope:
-                    kind = vars[self.symbol_table.subroutine_scope[var_name][1]]
-                    index = self.symbol_table.subroutine_scope[var_name][2]
-                    self.vm_writer.write_push(kind, index)
-                # Field variables (deal with static later)
-                elif var_name in self.symbol_table.class_scope:
-                    kind = vars[self.symbol_table.class_scope[var_name][1]]
-                    index = self.symbol_table.class_scope[var_name][2]
-                    self.vm_writer.write_push(kind, index)
+                # Dispatcher for checking variable scope 
+                dispatcher = {
+                    0: self.symbol_table.subroutine_scope,
+                    1: self.symbol_table.class_scope
+                }
 
-                self.eat(["varName"])
+                # Get variable kind and index
+                if var_name in self.symbol_table.subroutine_scope:
+                    key = 0
+                elif var_name in self.symbol_table.class_scope:
+                    key = 1
+
+                kind = vars[dispatcher[key][var_name][1]]
+                index = dispatcher[key][var_name][2]
+
+                # Array entry
+                if self.tokeniser.tokens[self.tokeniser.token_index + 1] == "[":
+                    self.eat(["varName"])
+                    self.eat(["["])
+                    self.compile_expression()
+                    self.eat(["]"])
+                    self.vm_writer.write_push(kind, index)
+                    self.vm_writer.write_arithmetic("add")
+                    self.vm_writer.write_pop("pointer", 1)
+                    self.vm_writer.write_push("that", 0)
+
+                # Variable
+                else:
+                    self.vm_writer.write_push(kind, index)
+                    self.eat(["varName"])
+
         else:
             # ( expression )
             if self.tokeniser.current_token() == "(":
                 self.eat(["("])
                 self.compile_expression()
                 self.eat(")")
+
             # unary operator term
             elif self.tokeniser.current_token() in unary_operators:
-                # WRITE UNARY_OP EXPRESSION TO VM FILE
                 command = self.tokeniser.current_token()
                 self.eat(["-|~"])
                 self.compile_term()
                 self.vm_writer.write_arithmetic(unary_operators[command])
-            # constant
+
+            # keyword, string, or integer constants
             else:
                 value = self.tokeniser.current_token()
-                # WRITE INT, BOOLEAN EXPRESSION, THIS EXPRESSION TO VM FILE
-                if value == "false" or value == "null":
+                # String constant
+                if self.tokeniser.token_type() == "STRING_CONST":
+                    string = self.tokeniser.string_val()
+                    self.vm_writer.write_string_constant(string)
+
+                # Integer constant
+                elif self.tokeniser.token_type() == "INT_CONST":
+                    self.vm_writer.write_push("constant", value)
+
+                # Boolean expressions
+                elif value == "false" or value == "null":
                     self.vm_writer.write_push("constant", 0)
                 elif value == "true":
                     self.vm_writer.write_push("constant", 1)
                     self.vm_writer.write_arithmetic("neg")
+                
+                # Pointers
                 elif value == "this":
                     self.vm_writer.write_push("pointer", 0)
-                else:
-                    self.vm_writer.write_push("constant", value) 
+
 
                 self.eat(["STRING_CONST|INT_CONST|KEYWORD"])
 
@@ -879,6 +932,15 @@ class VMWriter:
         """
         self.output_file.write(f"goto {label}\n")
 
+    def write_string_constant(self, string):
+        """
+        Writes VM code for a string constant.
+        """
+        self.write_push("constant", len(string))
+        self.write_call("String.new", 1)
+        for char in string:
+            self.write_push("constant", ord(char))
+            self.write_call("String.appendChar", 2)
 
 class Initialiser:
     """
