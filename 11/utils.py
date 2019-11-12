@@ -251,9 +251,9 @@ class CompilationEngine:
         }
 
         while True:
-            dispatcher[self.tokeniser.current_token()]()
             if (self.tokeniser.current_token() not in dispatcher):
                 break
+            dispatcher[self.tokeniser.current_token()]()
 
     def compile_let(self):
         """
@@ -695,7 +695,10 @@ class CompilationEngine:
         if self.tokeniser.token_type() == "IDENTIFIER":
 
             # Subroutine call
-            if self.tokeniser.tokens[self.tokeniser.token_index + 1] == ("." or "("):
+            if (
+                self.tokeniser.tokens[self.tokeniser.token_index + 1] == ("." or "(") 
+                or self.tokeniser.current_token() in self.get_methods()
+            ):
                 self.compile_subroutine_call()
 
             # Variable or array manipulation
