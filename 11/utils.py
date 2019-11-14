@@ -156,10 +156,6 @@ class CompilationEngine:
             ):
                 self.tokeniser.advance()
             else:
-                index = self.tokeniser.token_index
-                for i in range(20):
-                    print(self.tokeniser.tokens[index])
-                    index += 1
                 sys.exit(
                     f"SyntaxError: expected {token} not {actual_token}."
                     f"\nPlease double check token {self.tokeniser.token_index + 1} "
@@ -283,10 +279,7 @@ class CompilationEngine:
 
         # Compile body of IF and write to VM file
         id = self.get_id()
-        self.vm_writer.write_if("IF_TRUE_" + id)
-        self.vm_writer.write_goto("IF_FALSE_" + id)
-        self.vm_writer.write_label("IF_TRUE_" + id)
-
+        self.vm_writer.write_if_body(id)
         self.compile_statements()
         self.eat(["}"])
         
@@ -908,6 +901,14 @@ class VMWriter:
         for char in string:
             self.write_push("constant", ord(char))
             self.write_call("String.appendChar", 2)
+        
+    def write_if_body(self, id):
+        """
+        Writes VM code for the body of an if statement.
+        """
+        self.write_if("IF_TRUE_" + id)
+        self.write_goto("IF_FALSE_" + id)
+        self.write_label("IF_TRUE_" + id)
 
 
 class Initialiser:
