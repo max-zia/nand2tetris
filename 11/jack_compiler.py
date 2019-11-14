@@ -26,11 +26,15 @@ def main():
         vm_file = input_file.replace('jack', 'vm')
         file_names[input_file] = vm_file
 
-    # Tokenise input (a .jack class file) and write compilation to output
+    # Compile every .jack file and write to output
     for input_file, output_file in file_names.items():
-        tokeniser = JackTokeniser(input_file)              
-        symbol_table = SymbolTable(tokeniser)              
+        # Tokenise the input
+        tokeniser = JackTokeniser(input_file)
+        # Create a symbol table for the Jack class            
+        symbol_table = SymbolTable(tokeniser) 
+        # Create a vm_writer             
         vm_writer = VMWriter(output_file) 
+        # Prepare the compilation engine, compile the class, and close
         engine = CompilationEngine(tokeniser, symbol_table, vm_writer)
         engine.compile_class()                            
         vm_writer.close() 

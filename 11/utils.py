@@ -127,21 +127,44 @@ class CompilationEngine:
         self.vm_writer = vm_writer
         self.symbol_table = symbol_table
         
-    def eat(self, tokens):
+    def eat(self, expected_tokens):
         """
         Consumes the current token and advances over it. Raises a syntax error 
-        if the token is incorrect.
+        if the token was unexpected.
         """
-        for token in tokens:
+        accepted_types = [self.tokeniser.tokens[1], "Array"]
+
+        for token in expected_tokens:
+            actual_token = self.tokeniser.current_token()
             if (
-                self.tokeniser.current_token() in token.split("|") 
-                or ("varName" or "subroutineName" or "className" in token.split("|")
-                and (self.tokeniser.token_type() == "IDENTIFIER")) 
-                or "INT_CONST" or "STRING_CONST" or "KEYWORD" in token.split("|")
+                # The token itself is expected
+                (actual_token in token.split("|") or actual_token == "|") 
+                # The token is verified as an identifier/variable/type 
+                or (
+                    ("varName" in token.split("|")
+                    or "subroutineName" in token.split("|") 
+                    or "className" in token.split("|")
+                    or actual_token in accepted_types)
+                    and (self.tokeniser.token_type() == "IDENTIFIER")
+                )
+                # The token is a keyword, int, or string constant
+                or (
+                    (("INT_CONST" in token.split("|")) and isinstance(actual_token, int)) 
+                    or "STRING_CONST" in token.split("|") 
+                    or "KEYWORD" in token.split("|")
+                )
             ):
                 self.tokeniser.advance()
             else:
-                sys.exit(f"SyntaxError: expected {token} not {self.tokeniser.current_token()}")
+                index = self.tokeniser.token_index
+                for i in range(20):
+                    print(self.tokeniser.tokens[index])
+                    index += 1
+                sys.exit(
+                    f"SyntaxError: expected {token} not {actual_token}."
+                    f"\nPlease double check token {self.tokeniser.token_index + 1} "
+                    f"in {self.tokeniser.tokens[1] + '.jack'}"
+                )
     
     def update_st(self, name, type, kind):
         """
